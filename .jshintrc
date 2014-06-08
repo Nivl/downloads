@@ -1,0 +1,38 @@
+{
+  "node": true,
+  "browser": true,
+  "esnext": true,
+  "bitwise": true,
+  "camelcase": true,
+  "curly": true,
+  "eqeqeq": true,
+  "eqnull": true,
+  "es3": true,
+  "forin": true,
+  "immed": true,
+  "indent": 2,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "nonew": true,
+  "quotmark": "single",
+  "plusplus": true,
+  "regexp": true,
+  "undef": true,
+  "unused": true,
+  "strict": true,
+  "trailing": true,
+  "smarttabs": true,
+  "white": true,
+
+  "globals": {
+    "API": true,
+    "FormErrorMessages": true,
+    "$": true,
+    "App": true,
+    "jQuery": true,
+    "Ember": true,
+    "Handlebars": true,
+    "DS": true
+  }
+}
