@@ -1,12 +1,129 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,300italic);
 @import url(http://fonts.googleapis.com/css?family=Indie+Flower);
 
+@dark-blue: #355069;
+
+html, body, {
+    height: 100%;
+    min-height: 100%;
+}
+
 body {
-   font-family:   'Roboto', sans-serif;
-   font-weight:   300;
+   font-family:   'Roboto', sans-serif !important;
+   font-weight:   300 !important;
    font-size:     18px !important;
    line-height:   1.5;
 }
+
+a {
+  color:      #63AEEE;
+  transition: color 0.2s;
+
+  &:hover,
+  &:focus {
+    color:            #63AEEE;
+    text-decoration:  none;
+  }
+}
+
+h2, h4 {
+  margin-bottom: 40px;
+  font-weight:   300 !important;
+}
+
+#body {
+  .row {
+    margin-bottom: 50px;
+  }
+}
+
+#ember314 > header {
+  background-color: @dark-blue;
+  color:            white;
+  padding:          70px 0;
+  text-shadow:      0 1px 2px rgba(0, 0, 0, 0.2);
+  margin-bottom:    50px;
+
+  .panel-default {
+    text-shadow:  none;
+
+    & > .panel-heading {
+      background-color: white;
+      text-shadow:      none;
+
+      &.paused {
+        background-color: #334A5F !important;
+
+        a {
+          color: #547797;
+
+          &:hover,
+          &:focus {
+            color:  #4688B4
+          }
+        }
+      }
+
+      .main-link {
+        width:    93% !important;
+      }
+    }
+  }
+}
+
+.panel-default {
+  color:        #b1b1b1;
+
+  & > .panel-heading {
+    padding:           0;
+
+    &.cancelled {
+      background-color: #eea6a6 !important;
+
+      a {
+        &:hover,
+        &:focus {
+          color:  #B84545
+        }
+      }
+    }
+
+    &.paused {
+      background-color: white !important;
+
+      a {
+        color: #E4E4E4;
+
+        &:hover,
+        &:focus {
+          color:  #C0C0C0
+        }
+      }
+    }
+
+    &.completed {
+      background-color: #AFD6AE !important;
+
+      a {
+        &:hover,
+        &:focus {
+          color:  #507E59
+        }
+      }
+    }
+
+    .main-link {
+      display:  inline-block;
+      width:    92%;
+      padding:  10px 15px;
+    }
+  }
+}
+
+.panel {
+  margin-bottom: 20px !important;
+}
+
 
 // Semantic-UI fix
  .ui.menu {
