@@ -1,4 +1,4 @@
-WebApp of forever
+TV Shows download list
 
 Installation
 ============
