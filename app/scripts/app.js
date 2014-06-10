@@ -1,4 +1,5 @@
 window.App = Ember.Application.create();
+App.ApplicationAdapter = DS.FixtureAdapter.extend();
 
 Ember.TextSupport.reopen({
     attributeBindings: ['required']
