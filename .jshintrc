@@ -26,8 +26,6 @@
   "white": true,
 
   "globals": {
-    "API": true,
-    "FormErrorMessages": true,
     "$": true,
     "App": true,
     "jQuery": true,
