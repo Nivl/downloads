@@ -23,34 +23,8 @@
             <article class="today">
                 <h2 class="text-center">Shows aired yesterday</h2>
 
-                <div class="panel-group">
+                <show-list></show-list>
 
-                    <div class="panel panel-default" ng-repeat="show in shows">
-
-                        <div {{bind-attr class=":panel-heading isCancelled:cancelled isCompleted:completed isPaused:paused"}}>
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" class="main-link" {{bind-attr href="anchorSlug"}}>
-                                    {{title}}
-                                </a>
-
-                                <a {{bind-attr href="downloadLink"}}>
-                                    <i class="glyphicon glyphicon-link"></i>
-                                </a>
-                                <a {{bind-attr href="wikipedia"}}>
-                                    W
-                                </a>
-                            </h4>
-                        </div>
-
-                        <div {{bind-attr id="slug"}} class="panel-collapse collapse">
-
-                            <div class="panel-body">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ornare nisl ante, id adipiscing leo fermentum id. Donec auctor erat elit, at scelerisque turpis pellentesque in. Fusce et justo eu felis lacinia ornare. Vestibulum nisi est, aliquam sit amet eleifend eu, euismod quis sem. Nunc id neque in odio fermentum dictum in in nisl.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
             </article>
         </div>
     </header>

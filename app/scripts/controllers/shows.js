@@ -4,7 +4,6 @@ var apiURL = 'http://0.0.0.0:3000/';
 var tz = moment().tz('America/Los_Angeles');
 
 angular.module('app-controllers').controller('showController', ['$http', '$filter',  function ($http, $filter) {
-
   this.shows = {
     onMonday: [],
     onTuesday: [],
