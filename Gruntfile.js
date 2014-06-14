@@ -27,27 +27,23 @@ module.exports = function (grunt) {
     yeoman: yeomanConfig,
 
     watch: {
-      emberTemplates: {
-        files: '<%= yeoman.app %>/templates/**/*.hbs',
-        tasks: ['emberTemplates']
-      },
       neuter: {
-      files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-      tasks: ['neuter']
-    },
-    recess: {
-      files: ['<%= yeoman.app %>/styles/{,*/}*.less'],
-      tasks: ['recess:dist']
-    },
-    livereload: {
-      options: {
-        livereload: LIVERELOAD_PORT
+        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+        tasks: ['neuter']
       },
-      files: [
-        '.tmp/scripts/*.js',
-        '<%= yeoman.app %>/*.html',
-        '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
-        '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+      recess: {
+        files: ['<%= yeoman.app %>/styles/{,*/}*.less'],
+        tasks: ['recess:dist']
+      },
+      livereload: {
+        options: {
+          livereload: LIVERELOAD_PORT
+        },
+        files: [
+          '.tmp/scripts/*.js',
+          '<%= yeoman.app %>/*.html',
+          '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
+          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       }
     },
@@ -242,28 +238,14 @@ module.exports = function (grunt) {
 
     replace: {
       app: {
-        options: {
-          variables: {
-            ember: 'bower_components/ember/ember.js',
-            ember_data: 'bower_components/ember-data/ember-data.js'
-          }
-        },
-
         files: [
           {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
         ]
       },
 
       dist: {
-        options: {
-          variables: {
-            ember: 'bower_components/ember/ember.prod.js',
-            ember_data: 'bower_components/ember-data/ember-data.prod.js'
-          }
-        },
-
         files: [
-        {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
+          {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
         ]
       }
     },
@@ -300,35 +282,11 @@ module.exports = function (grunt) {
     },
 
     concurrent: {
-      server: [
-        'emberTemplates',
-      ],
-
-      test: [
-        'emberTemplates',
-      ],
-
       dist: [
-        'emberTemplates',
         'imagemin',
         'svgmin',
         'htmlmin'
       ]
-    },
-
-    emberTemplates: {
-      options: {
-        templateName: function (sourceFile) {
-          var templatePath = yeomanConfig.app + '/templates/';
-          return sourceFile.replace(templatePath, '');
-        }
-      },
-
-      dist: {
-        files: {
-          '.tmp/scripts/compiled-templates.js': '<%= yeoman.app %>/templates/{,*/}*.hbs'
-        }
-      }
     },
 
     neuter: {
