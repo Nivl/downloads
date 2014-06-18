@@ -34,8 +34,7 @@ var showList = {
   }
 };
 
-// replace by a real controller and set it to ng-controller
-var addShowController = function ($scope, $modalInstance, $filter, $http) {
+angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http',  function AddShowController($scope, $modalInstance, $filter, $http) {
   var defaultShow = {
     day: 1
   };
@@ -103,7 +102,7 @@ var addShowController = function ($scope, $modalInstance, $filter, $http) {
   };
 
 
-};
+}]);
 
 
 
@@ -121,7 +120,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
   this.open = function () {
     $modal.open({
       templateUrl: 'partials/directives/addShow.html',
-      controller: addShowController
+      controller: 'AddShowController'
     });
   };
 }]);
