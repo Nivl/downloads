@@ -4,6 +4,11 @@
 @dark-blue:   #355069;
 @light-blue:  #5e7a9b;
 
+h1, h2, h3, h4, h5, h6,
+label {
+  font-weight:   300 !important; // 400 if other content than titles
+}
+
 html, body, {
     height: 100%;
     min-height: 100%;
@@ -11,9 +16,15 @@ html, body, {
 
 body {
    font-family:   'Roboto', sans-serif !important;
-   font-weight:   300 !important;
    font-size:     18px !important;
+   font-weight:   300 !important;
    line-height:   1.5;
+}
+
+i.spin {
+  -moz-animation: spin 0.5s linear infinite;
+  -webkit-animation: spin 0.5s linear infinite;
+  animation: spin 0.5s linear infinite;
 }
 
 a {
@@ -29,7 +40,6 @@ a {
 
 h2, h4 {
   margin-bottom: 40px;
-  font-weight:   300 !important;
 }
 
 #body {
@@ -39,7 +49,7 @@ h2, h4 {
 }
 
 body > header {
-  background: linear-gradient(@dark-blue, #5e7a9b);
+  background:       linear-gradient(@dark-blue, #5e7a9b);
   color:            white;
   padding:          70px 0;
   text-shadow:      0 1px 2px rgba(0, 0, 0, 0.2);
@@ -48,7 +58,7 @@ body > header {
   .panel-default {
     text-shadow:  none;
 
-    & > .panel-heading {
+    .panel-heading {
       background-color: white;
       text-shadow:      none;
 
@@ -75,7 +85,7 @@ body > header {
 .panel-default {
   color:        #b1b1b1;
 
-  & > .panel-heading {
+  .panel-heading {
     padding:           0;
 
     &.cancelled {
@@ -121,18 +131,28 @@ body > header {
   }
 }
 
+h2 {
+  .add-link {
+    font-size: 20px;
+    opacity: 0;
+    transition: opacity 0.2s linear;
+
+  }
+
+  &:hover {
+    .add-link {
+      opacity: 1;
+    }
+  }
+}
+
 .panel {
   margin-bottom: 20px !important;
 }
 
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
-// Semantic-UI fix
- .ui.menu {
-    font-weight:  300;
-    color:        white;
-}
+// Bootstrap fix
 
-img {
-   max-width:  100%;
-   height:     auto;
-}
