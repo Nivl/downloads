@@ -1,0 +1,93 @@
+<div class="modal-header">
+  <h3 class="modal-title">Add a new show</h3>
+</div>
+
+<form name="addShowForm" class="form-horizontal" role="form" ng-submit="addShowForm.$valid && addShow()" novalidate>
+  <div class="modal-body">
+
+    <div class="form-group">
+      <label for="title" class="col-sm-4 control-label">Title</label>
+      <div class="col-sm-8">
+        <input type="text" ng-blur="titleEntered()" ng-model="show.title" class="form-control" id="title" name="title" placeholder="Show title" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-4 col-sm-8">
+        <div class="checkbox">
+          <label>
+            <input ng-model="show.isAiring" type="checkbox"> is currently airing (so not in pause)
+          </label>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="form-group" ng-show="show.isAiring">
+      <label for="airing-day" class="col-sm-4 control-label">Airing day</label>
+      <div class="col-sm-8">
+        <select id="airing-day" ng-model="show.day" name="day" class="form-control">
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+          <option value="6">Saturday</option>
+          <option value="0">Sunday</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="form-group" ng-hide="show.isAiring">
+      <label for="airing-day" class="col-sm-4 control-label">Returning date</label>
+
+      <div class="col-sm-8">
+        <p class="input-group">
+          <input type="text" ng-model="show.returningDate" class="form-control" />
+
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+      </div>
+    </div>
+
+
+    <div class="form-group">
+      <label for="wikipedia" class="col-sm-4 control-label">Wikipedia</label>
+
+      <div class="col-sm-8">
+        <div class="input-group">
+          <input type="text" class="form-control" id="wikipedia" ng-model="show.wikipedia" placeholder="Wikipedia">
+
+          <span class="input-group-btn">
+            <button type="button" ng-click="fetchWikipedia()" class="btn btn-default">
+              <i ng-class="{spin: anim.wikipedia}" class="glyphicon glyphicon-refresh"></i>
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="title" class="col-sm-4 control-label">Download link</label>
+      <div class="col-sm-8">
+        <div class="input-group">
+          <input type="text" class="form-control" id="downloadLink" ng-model="show.downloadLink" placeholder="DownloadLink">
+
+          <span class="input-group-btn">
+            <button type="button" ng-click="fetchDownloadLink()" class="btn btn-default">
+              <i ng-class="{spin: anim.wikipedia}" class="glyphicon glyphicon-refresh"></i>
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary">Add</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+  </div>
+</form>

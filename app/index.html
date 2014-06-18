@@ -17,17 +17,171 @@
     <!-- endbuild -->
 </head>
 
-<body ng-controller="showController">
+<body ng-controller="ShowController as showCtrl">
     <header class="clearfix">
         <div class="col-md-6 col-md-offset-3">
             <article class="today">
                 <h2 class="text-center">Shows aired yesterday</h2>
 
-                <show-list></show-list>
+              <div class="panel-group">
+
+                <div class="panel panel-default" ng-repeat="show in showCtrl.shows.fromYesterday">
+                  <show-list></show-list>
+                </div>
+              </div>
 
             </article>
         </div>
     </header>
+
+    <div id="body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-5 col-md-offset-1">
+                    <article>
+                        <h2 class="text-center">
+                          Monday
+                          <a class="add-link" href="#" ng-click="showCtrl.open()">
+                            <i class="glyphicon glyphicon-plus-sign"></i>
+                          </a>
+                        </h2>
+
+                      <div class="panel-group">
+
+                        <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onMonday">
+                          <show-list></show-list>
+                        </div>
+                      </div>
+                    </article>
+                </div>
+
+                <div class="col-md-5">
+                    <article class="today">
+                        <h2 class="text-center">
+                          Tuesday
+                          <a class="add-link" href="#" ng-click="showCtrl.open()">
+                            <i class="glyphicon glyphicon-plus-sign"></i>
+                          </a>
+                        </h2>
+
+                      <div class="panel-group">
+
+                        <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onTuesday">
+                          <show-list></show-list>
+                        </div>
+                      </div>
+
+                    </article>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5 col-md-offset-1">
+                    <article>
+                        <h2 class="text-center">
+                          Wednesday
+                          <a class="add-link" href="#" ng-click="showCtrl.open()">
+                            <i class="glyphicon glyphicon-plus-sign"></i>
+                          </a>
+                        </h2>
+
+                      <div class="panel-group">
+
+                        <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onWednesday">
+                          <show-list></show-list>
+                        </div>
+                      </div>
+
+
+                    </article>
+                </div>
+
+                <div class="col-md-5">
+                    <article class="today">
+                        <h2 class="text-center">
+                          Thursday
+                          <a class="add-link" href="#" ng-click="showCtrl.open()">
+                            <i class="glyphicon glyphicon-plus-sign"></i>
+                          </a>
+                        </h2>
+
+                      <div class="panel-group">
+
+                        <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onThursday">
+                          <show-list></show-list>
+                        </div>
+                      </div>
+
+                    </article>
+                </div>
+            </div>
+
+          <div class="row">
+            <div class="col-md-5 col-md-offset-1">
+              <article>
+                <h2 class="text-center">
+                  Friday
+                  <a class="add-link" href="#" ng-click="showCtrl.open()">
+                    <i class="glyphicon glyphicon-plus-sign"></i>
+                  </a>
+                </h2>
+
+                <div class="panel-group">
+
+                  <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onFriday">
+                    <show-list></show-list>
+                  </div>
+                </div>
+
+
+              </article>
+            </div>
+
+            <div class="col-md-5">
+              <article class="today">
+                <h2 class="text-center">
+                  Saturday
+                  <a class="add-link" href="#" ng-click="showCtrl.open()">
+                    <i class="glyphicon glyphicon-plus-sign"></i>
+                  </a>
+                </h2>
+
+                <div class="panel-group">
+
+                  <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onSaturday">
+                    <show-list></show-list>
+                  </div>
+                </div>
+
+
+              </article>
+            </div>
+          </div>
+
+
+
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <article>
+                <h2 class="text-center">
+                  Sunday
+                  <a class="add-link" href="#" ng-click="showCtrl.open()">
+                    <i class="glyphicon glyphicon-plus-sign"></i>
+                  </a>
+                </h2>
+
+                <div class="panel-group">
+
+                  <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onSunday">
+                    <show-list></show-list>
+                  </div>
+                </div>
+
+
+
+              </article>
+            </div>
+          </div>
 
     <!-- build:js(app) scripts/vendors.js -->
 
@@ -39,6 +193,7 @@
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/moment/moment.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <!-- endbower -->
     <script src="bower_components/moment-timezone/moment-timezone.js"></script>
     <script>
