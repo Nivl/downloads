@@ -123,4 +123,12 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
       controller: 'AddShowController'
     });
   };
+
+  this.edit = function () {
+    console.log('todo');
+  };
+
+  this.remove = function () {
+    console.log('todo');
+  };
 }]);
