@@ -49,6 +49,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
   $scope.addShow = function () {
     $http.post(apiURL + 'shows/', {'formData': $scope.show}).success(function (data) {
+      console.log(data);
 
       angular.copy(defaultShow, $scope.show);
 
