@@ -88,12 +88,14 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
   this.days = showsByDay;
 
   this.yesterdaysShows = function () {
-    var yesterday = tz.isoWeekday() - 1;
+    var yesterday = tz.isoWeekday() - 2; // -1 for yesterday, -1 for the index
+
+    console.log(yesterday);
 
     if (yesterday < 0 || yesterday > 6) {
       return [];
     } else {
-      return showsByDay[yesterday].shows;
+      return that.days[yesterday].shows;
     }
   };
 
