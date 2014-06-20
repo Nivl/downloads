@@ -3,41 +3,15 @@
 var apiURL = 'http://0.0.0.0:3000/';
 var tz = moment().tz('America/Los_Angeles');
 
-var dayToList = [
-  'onSunday',
-  'onMonday',
-  'onTuesday',
-  'onWednesday',
-  'onThursday',
-  'onFriday',
-  'onSaturday'
+var showsByDay = [
+  {name: 'Monday', shows: []},
+  {name: 'Tuesday', shows: []},
+  {name: 'Wednesday', shows: []},
+  {name: 'Thursday', shows: []},
+  {name: 'Friday', shows: []},
+  {name: 'Saturday', shows: []},
+  {name: 'Sunday', shows: []}
 ];
-
-var showList = {
-  onMonday: [],
-  onTuesday: [],
-  onWednesday: [],
-  onThursday: [],
-  onFriday: [],
-  onSaturday: [],
-  onSunday: [],
-
-  fromYesterday: function () {
-    var yesterday = tz.format('d');
-
-    if (yesterday < -1 || yesterday > 6) {
-      return [];
-    } else {
-      var reference = dayToList[yesterday];
-      return this[reference];
-    }
-  },
-
-  add: function (show) {
-    var reference = dayToList[show.day];
-    this[reference].push(show);
-  }
-};
 
 angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http',  function AddShowController($scope, $modalInstance, $filter, $http) {
   var defaultShow = {
@@ -54,7 +28,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
   $scope.addShow = function () {
     $http.post(apiURL + 'shows/', {'formData': $scope.show}).success(function (data) {
-      showList.add(data);
+      showsByDay[data.day - 1].shows.push(data);
 
       console.log('Close modal');
       angular.copy(defaultShow, $scope.show);
@@ -105,20 +79,27 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
-
-
 }]);
 
 
 
 angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal',  function ($http, $filter, $modal) {
   var that = this;
-  this.shows = showList;
+  this.days = showsByDay;
+
+  this.yesterdaysShows = function () {
+    var yesterday = tz.isoWeekday() - 1;
+
+    if (yesterday < 0 || yesterday > 6) {
+      return [];
+    } else {
+      return showsByDay[yesterday].shows;
+    }
+  };
 
   $http.get(apiURL + 'shows/').success(function (data) {
     for (var i = 0; i < 7; i += 1) {
-      var reference = dayToList[i];
-      that.shows[reference] = $filter('filter')(data, {day: i}, true);
+      that.days[i].shows = $filter('filter')(data, {day: i + 1}, true);
     }
   });
 
@@ -127,6 +108,52 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
       templateUrl: 'partials/directives/addShow.html',
       controller: 'AddShowController'
     });
+  };
+
+  this.swapShows = function (showId, currentDay, newDay, index) {
+    that.days[newDay].shows.push(that.days[currentDay].shows[index]);
+    that.days[currentDay].shows.splice(index, 1);
+
+    var url = apiURL + 'shows/' + showId + '/';
+    var data = {formData: {day: newDay + 1}};
+
+    $http.put(url, data).error(function (data) {
+      console.log('Fail');
+      // We revert the shows
+      var nbShows = that.days[newDay].shows.length;
+
+      for (var i = 0; i < nbShows; i += 1) {
+        if (that.days[newDay].shows[i]._id === showId) {
+          that.days[currentDay].shows.push(that.days[newDay].shows[i]);
+          that.days[newDay].shows.splice(i, 1);
+          break;
+        }
+      }
+    });
+  };
+
+  this.dropped = function (dragEl, dropEl) {
+    console.log('dropped');
+
+    var dragId = angular.element(dragEl).attr('id');
+    var dropId = angular.element(dropEl).attr('id');
+
+    var newDay = parseInt(dropId, 10);
+    var currentDay = dragId.substr(-1);
+    var showId = dragId.substr(0, dragId.length - 2);
+
+    console.log('moving ' + showId + ' from ' + currentDay + ' to ' + newDay);
+
+    if (newDay >= 0 && newDay <= 6) {
+      var nbShows = that.days[currentDay].shows.length;
+
+      for (var i = 0; i < nbShows; i += 1) {
+        if (that.days[currentDay].shows[i]._id === showId) {
+          that.swapShows(showId, currentDay, newDay, i);
+          break;
+        }
+      }
+    }
   };
 
   this.edit = function () {

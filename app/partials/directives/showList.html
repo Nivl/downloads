@@ -2,7 +2,7 @@
 <div>
   <div class="panel-heading" ng-class="{cancelled: show.isCancelled, completed: show.isCompleted}">
     <h4 class="panel-title">
-      <a data-toggle="collapse" class="main-link" href="#show-{{show._id}}">
+      <a data-toggle="collapse" class="main-link" ng-href="#show-{{show._id}}">
         {{show.title}}
       </a>
 

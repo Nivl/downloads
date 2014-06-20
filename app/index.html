@@ -25,7 +25,7 @@
 
               <div class="panel-group">
 
-                <div class="panel panel-default" ng-repeat="show in showCtrl.shows.fromYesterday">
+                <div class="panel panel-default" ng-repeat="show in showCtrl.yesterdaysShows">
                   <show-list></show-list>
                 </div>
               </div>
@@ -36,152 +36,27 @@
 
     <div id="body">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-5 col-md-offset-1">
+            <div ng-class-even="'row'" ng-repeat="day in showCtrl.days">
+                <div ng-class-odd="{'col-md-offset-1':!$last}" ng-class="{'col-md-5':!$last, 'col-md-6 col-md-offset-3':$last}">
                     <article>
                         <h2 class="text-center">
-                          Monday
+                          {{day.name}}
                           <a class="add-link" ng-click="showCtrl.open()">
                             <i class="glyphicon glyphicon-plus-sign"></i>
                           </a>
                         </h2>
 
-                      <div class="panel-group">
+                      <div class="panel-group" id="{{$index}}" nv-drop-target='true' nv-drop='showCtrl.dropped(dragEl, dropEl)'>
 
-                        <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onMonday">
+                        <div class="panel panel-default" id="{{show._id}}-{{$parent.$index}}" nv-draggable="true" ng-repeat="show in day.shows">
                           <show-list></show-list>
                         </div>
                       </div>
                     </article>
                 </div>
-
-                <div class="col-md-5">
-                    <article class="today">
-                        <h2 class="text-center">
-                          Tuesday
-                          <a class="add-link" ng-click="showCtrl.open()">
-                            <i class="glyphicon glyphicon-plus-sign"></i>
-                          </a>
-                        </h2>
-
-                      <div class="panel-group">
-
-                        <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onTuesday">
-                          <show-list></show-list>
-                        </div>
-                      </div>
-
-                    </article>
-                </div>
             </div>
-
-            <div class="row">
-                <div class="col-md-5 col-md-offset-1">
-                    <article>
-                        <h2 class="text-center">
-                          Wednesday
-                          <a class="add-link" ng-click="showCtrl.open()">
-                            <i class="glyphicon glyphicon-plus-sign"></i>
-                          </a>
-                        </h2>
-
-                      <div class="panel-group">
-
-                        <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onWednesday">
-                          <show-list></show-list>
-                        </div>
-                      </div>
-
-
-                    </article>
-                </div>
-
-                <div class="col-md-5">
-                    <article class="today">
-                        <h2 class="text-center">
-                          Thursday
-                          <a class="add-link" ng-click="showCtrl.open()">
-                            <i class="glyphicon glyphicon-plus-sign"></i>
-                          </a>
-                        </h2>
-
-                      <div class="panel-group">
-
-                        <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onThursday">
-                          <show-list></show-list>
-                        </div>
-                      </div>
-
-                    </article>
-                </div>
-            </div>
-
-          <div class="row">
-            <div class="col-md-5 col-md-offset-1">
-              <article>
-                <h2 class="text-center">
-                  Friday
-                  <a class="add-link" ng-click="showCtrl.open()">
-                    <i class="glyphicon glyphicon-plus-sign"></i>
-                  </a>
-                </h2>
-
-                <div class="panel-group">
-
-                  <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onFriday">
-                    <show-list></show-list>
-                  </div>
-                </div>
-
-
-              </article>
-            </div>
-
-            <div class="col-md-5">
-              <article class="today">
-                <h2 class="text-center">
-                  Saturday
-                  <a class="add-link" ng-click="showCtrl.open()">
-                    <i class="glyphicon glyphicon-plus-sign"></i>
-                  </a>
-                </h2>
-
-                <div class="panel-group">
-
-                  <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onSaturday">
-                    <show-list></show-list>
-                  </div>
-                </div>
-
-
-              </article>
-            </div>
-          </div>
-
-
-
-          <div class="row">
-            <div class="col-md-6 col-md-offset-3">
-              <article>
-                <h2 class="text-center">
-                  Sunday
-                  <a class="add-link" ng-click="showCtrl.open()">
-                    <i class="glyphicon glyphicon-plus-sign"></i>
-                  </a>
-                </h2>
-
-                <div class="panel-group">
-
-                  <div class="panel panel-default" ng-repeat="show in showCtrl.shows.onSunday">
-                    <show-list></show-list>
-                  </div>
-                </div>
-
-
-
-              </article>
-            </div>
-          </div>
+        </div>
+    </div>
 
     <!-- build:js(app) scripts/vendors.js -->
 
@@ -197,6 +72,8 @@
     <!-- endbower -->
     <script src="bower_components/moment-timezone/moment-timezone.js"></script>
     <script>
+      jQuery.event.props.push('dataTransfer');
+
       moment.tz.add({
         "zones": {
           "America/Los_Angeles": [
