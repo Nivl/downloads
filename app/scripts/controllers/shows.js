@@ -110,31 +110,15 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
     });
   };
 
-  this.swapShows = function (showId, currentDay, newDay, index) {
-    that.days[newDay].shows.push(that.days[currentDay].shows[index]);
-    that.days[currentDay].shows.splice(index, 1);
+  this.edit = function () {
+    console.log('todo');
+  };
 
-    var url = apiURL + 'shows/' + showId + '/';
-    var data = {formData: {day: newDay + 1}};
-
-    $http.put(url, data).error(function (data) {
-      console.log('Fail');
-      // We revert the shows
-      var nbShows = that.days[newDay].shows.length;
-
-      for (var i = 0; i < nbShows; i += 1) {
-        if (that.days[newDay].shows[i]._id === showId) {
-          that.days[currentDay].shows.push(that.days[newDay].shows[i]);
-          that.days[newDay].shows.splice(i, 1);
-          break;
-        }
-      }
-    });
+  this.remove = function () {
+    console.log('todo');
   };
 
   this.dropped = function (dragEl, dropEl) {
-    console.log('dropped');
-
     var dragId = angular.element(dragEl).attr('id');
     var dropId = angular.element(dropEl).attr('id');
 
@@ -142,25 +126,39 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
     var currentDay = dragId.substr(-1);
     var showId = dragId.substr(0, dragId.length - 2);
 
-    console.log('moving ' + showId + ' from ' + currentDay + ' to ' + newDay);
-
     if (newDay >= 0 && newDay <= 6) {
       var nbShows = that.days[currentDay].shows.length;
 
       for (var i = 0; i < nbShows; i += 1) {
         if (that.days[currentDay].shows[i]._id === showId) {
-          that.swapShows(showId, currentDay, newDay, i);
+          that._swapShows(showId, currentDay, newDay, i);
           break;
         }
       }
     }
   };
 
-  this.edit = function () {
-    console.log('todo');
+  this._swapShows = function (showId, currentDay, newDay, index) {
+    that.days[newDay].shows.push(that.days[currentDay].shows[index]);
+    that.days[currentDay].shows.splice(index, 1);
+
+    var url = apiURL + 'shows/' + showId + '/';
+    var data = {formData: {day: newDay + 1}};
+
+    $http.put(url, data).error(function () {
+      that.revertSwap(showId, currentDay, newDay);
+    });
   };
 
-  this.remove = function () {
-    console.log('todo');
+  this._revertSwap = function (showId, currentDay, newDay) {
+    var nbShows = that.days[newDay].shows.length;
+
+    for (var i = 0; i < nbShows; i += 1) {
+      if (that.days[newDay].shows[i]._id === showId) {
+        that.days[currentDay].shows.push(that.days[newDay].shows[i]);
+        that.days[newDay].shows.splice(i, 1);
+        break;
+      }
+    }
   };
 }]);
