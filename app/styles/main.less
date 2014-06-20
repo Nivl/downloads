@@ -55,28 +55,32 @@ body > header {
   text-shadow:      0 1px 2px rgba(0, 0, 0, 0.2);
   margin-bottom:    50px;
 
-  .panel-default {
-    text-shadow:  none;
+  .panel-group {
+    border: none !important;
 
-    .panel-heading {
-      background-color: white;
-      text-shadow:      none;
+    .panel-default {
+      text-shadow: none;
 
-      &.paused {
-        background-color: #334A5F !important;
+      .panel-heading {
+        background-color: white;
+        text-shadow: none;
 
-        a {
-          color: #547797;
+        &.paused {
+          background-color: #334A5F !important;
 
-          &:hover,
-          &:focus {
-            color:  #4688B4
+          a {
+            color: #547797;
+
+            &:hover,
+            &:focus {
+              color: #4688B4
+            }
           }
         }
-      }
 
-      .main-link {
-        width:    93% !important;
+        .main-link {
+          width: 93% !important;
+        }
       }
     }
   }
@@ -158,8 +162,13 @@ h2 {
 }
 
 .panel-group {
-  background-color: red;
   padding: 20px 0;
+  border: 2px dashed white;
+
+  &.drop-area {
+    border: 2px dashed #EEE;
+    border-radius: 10px;
+  }
 }
 
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }

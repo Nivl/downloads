@@ -1,5 +1,25 @@
 'use strict';
 
+angular.module('app-directives').directive('nvClass', ['$rootScope', function ($rootScope) {
+  return {
+    restrict: 'A',
+    link: function (scope, el, attrs, controller) {
+      attrs.$observe('nvClass', function (value) {
+        $rootScope.$on('LVL-DRAG-START', function () {
+          console.log(
+            value
+          );
+          attrs.$addClass(value);
+        });
+
+        $rootScope.$on('LVL-DRAG-END', function () {
+          attrs.$removeClass(value);
+        });
+      });
+    }
+  };
+}]);
+
 angular.module('app-directives').directive('nvDraggable', ['$rootScope', function ($rootScope) {
   return {
     restrict: 'A',
