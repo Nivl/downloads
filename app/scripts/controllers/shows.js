@@ -16,6 +16,7 @@ var showsByDay = [
 
 
 angular.module('app-controllers').controller('RemoveShowController', ['$scope', '$modalInstance', '$http', 'id', function RemoveShowController($scope, $modalInstance, $http, id) {
+  // Set the current status of the show
   $scope.formData = {
     status: 'cancelled'
   };
@@ -51,16 +52,17 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
             $modalInstance.dismiss();
           });
         } else {
-          var data = ($scope.formData.status === 'completed') ? {isCompleted: true, isCancelled: false} : {isCompleted: false, isCancelled: true};
+          var data = {isCompleted: false, isCancelled: false};
+
+          if ($scope.formData.status === 'completed') {
+            data.isCompleted = true;
+          } else if ($scope.formData.status === 'cancelled') {
+            data.isCancelled = true;
+          }
 
           $http.put(url, {'formData': data}).success(function () {
-            if ($scope.formData.status === 'completed') {
-              showsByDay[day].shows[index].isCompleted = true;
-              showsByDay[day].shows[index].isCancelled = false;
-            } else {
-              showsByDay[day].shows[index].isCompleted = false;
-              showsByDay[day].shows[index].isCancelled = true;
-            }
+            showsByDay[day].shows[index].isCompleted = data.isCompleted;
+            showsByDay[day].shows[index].isCancelled = data.isCancelled;
           }).finally(function () {
             $modalInstance.dismiss();
           });
