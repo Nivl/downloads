@@ -48,8 +48,6 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
 
     if (showIndex !== false) {
       if ($scope.formData.status === 'remove') {
-        console.log('remove');
-
         $http.delete(url).success(function () {
           showsByDay[day].shows.splice(showIndex, 1);
         }).finally(function () {
@@ -154,8 +152,6 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
 
   this.yesterdaysShows = function () {
     var yesterday = tz.isoWeekday() - 2; // -1 for yesterday, -1 for the index
-
-    console.log(yesterday);
 
     if (yesterday < 0 || yesterday > 6) {
       return [];
