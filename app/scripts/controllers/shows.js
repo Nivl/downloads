@@ -1,5 +1,7 @@
 'use strict';
 
+//TODO: Write a factory to clean the code
+
 var apiURL = 'http://0.0.0.0:3000/';
 var tz = moment().tz('America/Los_Angeles');
 
@@ -14,6 +16,19 @@ var showsByDay = [
 ];
 
 
+function findShow(showId, day) {
+  if (day >= 0 && day <= 6) {
+    var length = showsByDay[day].shows.length;
+
+    for (var index = 0; index < length; index += 1) {
+      if (showsByDay[day].shows[index]._id === showId) {
+        return index;
+      }
+    }
+  }
+
+  return false;
+}
 
 angular.module('app-controllers').controller('RemoveShowController', ['$scope', '$modalInstance', '$http', 'id', function RemoveShowController($scope, $modalInstance, $http, id) {
   // Set the current status of the show
@@ -29,44 +44,32 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
     var day = parseInt(id.substr(-1), 10) - 1;
     var showId = id.substr(0, id.length - 2);
     var url = apiURL + 'shows/' + showId + '/';
+    var showIndex = findShow(showId, day);
 
-    if (day >= 0 && day <= 6) {
-      // getShowById -> return ID or false;
-      var length = showsByDay[day].shows.length;
-      var found = false;
+    if (showIndex !== false) {
+      if ($scope.formData.status === 'remove') {
+        console.log('remove');
 
-      for (var index = 0; index < length; index += 1) {
-        if (showsByDay[day].shows[index]._id === showId) {
-          found = true;
-          break;
+        $http.delete(url).success(function () {
+          showsByDay[day].shows.splice(showIndex, 1);
+        }).finally(function () {
+          $modalInstance.dismiss();
+        });
+      } else {
+        var data = {isCompleted: false, isCancelled: false};
+
+        if ($scope.formData.status === 'completed') {
+          data.isCompleted = true;
+        } else if ($scope.formData.status === 'cancelled') {
+          data.isCancelled = true;
         }
-      }
 
-      if (found) {
-        if ($scope.formData.status === 'remove') {
-          console.log('remove');
-
-          $http.delete(url).success(function () {
-            showsByDay[day].shows.splice(index, 1);
-          }).finally(function () {
-            $modalInstance.dismiss();
-          });
-        } else {
-          var data = {isCompleted: false, isCancelled: false};
-
-          if ($scope.formData.status === 'completed') {
-            data.isCompleted = true;
-          } else if ($scope.formData.status === 'cancelled') {
-            data.isCancelled = true;
-          }
-
-          $http.put(url, {'formData': data}).success(function () {
-            showsByDay[day].shows[index].isCompleted = data.isCompleted;
-            showsByDay[day].shows[index].isCancelled = data.isCancelled;
-          }).finally(function () {
-            $modalInstance.dismiss();
-          });
-        }
+        $http.put(url, {'formData': data}).success(function () {
+          showsByDay[day].shows[showIndex].isCompleted = data.isCompleted;
+          showsByDay[day].shows[showIndex].isCancelled = data.isCancelled;
+        }).finally(function () {
+          $modalInstance.dismiss();
+        });
       }
     }
   };
