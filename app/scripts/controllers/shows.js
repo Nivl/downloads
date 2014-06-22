@@ -13,6 +13,65 @@ var showsByDay = [
   {name: 'Sunday', shows: []}
 ];
 
+
+
+angular.module('app-controllers').controller('RemoveShowController', ['$scope', '$modalInstance', '$http', 'id', function RemoveShowController($scope, $modalInstance, $http, id) {
+  $scope.formData = {
+    status: 'cancelled'
+  };
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+
+  $scope.removeShow = function () {
+    var day = parseInt(id.substr(-1), 10) - 1;
+    var showId = id.substr(0, id.length - 2);
+    var url = apiURL + 'shows/' + showId + '/';
+
+    if (day >= 0 && day <= 6) {
+      // getShowById -> return ID or false;
+      var length = showsByDay[day].shows.length;
+      var found = false;
+
+      for (var index = 0; index < length; index += 1) {
+        if (showsByDay[day].shows[index]._id === showId) {
+          found = true;
+          break;
+        }
+      }
+
+      if (found) {
+        if ($scope.formData.status === 'remove') {
+          console.log('remove');
+
+          $http.delete(url).success(function () {
+            showsByDay[day].shows.splice(index, 1);
+          }).finally(function () {
+            $modalInstance.dismiss();
+          });
+        } else {
+          var data = ($scope.formData.status === 'completed') ? {isCompleted: true, isCancelled: false} : {isCompleted: false, isCancelled: true};
+
+          $http.put(url, {'formData': data}).success(function () {
+            if ($scope.formData.status === 'completed') {
+              showsByDay[day].shows[index].isCompleted = true;
+              showsByDay[day].shows[index].isCancelled = false;
+            } else {
+              showsByDay[day].shows[index].isCompleted = false;
+              showsByDay[day].shows[index].isCancelled = true;
+            }
+          }).finally(function () {
+            $modalInstance.dismiss();
+          });
+        }
+      }
+    }
+  };
+}]);
+
+
+
 angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http',  function AddShowController($scope, $modalInstance, $filter, $http) {
   var defaultShow = {
     day: 1
@@ -52,6 +111,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
       var encodedTitle = $scope.show.title.replace(/ /g, '_');
       var jsonUrl = 'https://en.wikipedia.org/w/api.php?format=json&action=query&callback=JSON_CALLBACK&titles=List_of_' + encodedTitle + '_episodes';
 
+      // todo use .always
       $http.jsonp(jsonUrl).success(function (data) {
         try {
           if (data.query.pages[-1].missing === '') {
@@ -116,11 +176,18 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
     console.log('todo');
   };
 
-  this.remove = function () {
-    console.log('todo');
+  this.remove = function (id) {
+    $modal.open({
+      templateUrl: 'partials/modals/removeShow.html',
+      controller: 'RemoveShowController',
+      resolve: {
+        id: function () { return id; }
+      }
+    });
   };
 
   this.dropped = function (dragEl, dropEl) {
+    // use show.day - 1 instead of {{$parent.$index}}
     var dragId = angular.element(dragEl).attr('id');
     var dropId = angular.element(dropEl).attr('id');
 
