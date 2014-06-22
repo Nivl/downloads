@@ -1,5 +1,11 @@
+'use strict';
 
-angular.module('app', ['app-controllers', 'app-directives', 'app-filters', 'ui.bootstrap']);
+angular.module('app', ['app-controllers', 'app-directives', 'app-filters', 'ui.bootstrap'])
+  .config(function ($resourceProvider) {
+    $resourceProvider.defaults.stripTrailingSlashes = false;
+  });
+
+
 angular.module('app-factories', ['ngResource']);
 angular.module('app-controllers', ['app-factories']);
 angular.module('app-directives', []);
