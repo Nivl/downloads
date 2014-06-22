@@ -31,20 +31,35 @@ function findShow(showId, day) {
 }
 
 angular.module('app-controllers').controller('RemoveShowController', ['$scope', '$modalInstance', '$http', 'id', function RemoveShowController($scope, $modalInstance, $http, id) {
+  var day = parseInt(id.substr(-1), 10) - 1;
+  var showId = id.substr(0, id.length - 2);
+  var showIndex = findShow(showId, day);
+
+  function getInitialStatus() {
+    if (showsByDay[day].shows[showIndex].isCompleted) {
+      return 'completed';
+    } else if (showsByDay[day].shows[showIndex].isCancelled) {
+      return 'cancelled';
+    }
+    return 'airing';
+  }
+
+  if (showIndex === false) {
+    $modalInstance.dismiss('wrong show');
+  }
+
   // Set the current status of the show
   $scope.formData = {
-    status: 'cancelled'
+    status: getInitialStatus()
   };
 
+  // TODO: FIX Cancel also fire removeShow
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
 
   $scope.removeShow = function () {
-    var day = parseInt(id.substr(-1), 10) - 1;
-    var showId = id.substr(0, id.length - 2);
     var url = apiURL + 'shows/' + showId + '/';
-    var showIndex = findShow(showId, day);
 
     if (showIndex !== false) {
       if ($scope.formData.status === 'remove') {
