@@ -175,11 +175,19 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
     }
   };
 
-  $http.get(apiURL + 'shows/').success(function (data) {
-    for (var i = 0; i < 7; i += 1) {
-      that.days[i].shows = $filter('filter')(data, {day: i + 1}, true);
+  var shows = Show.query(function () {
+    var length = shows.length;
+
+    for (var i = 0; i < length; i += 1) {
+      if (shows[i] instanceof Show) {
+        var show = shows[i];
+
+        that.days[show.day - 1].shows.push(show);
+      }
     }
   });
+
+
 
   this.open = function () {
     $modal.open({
