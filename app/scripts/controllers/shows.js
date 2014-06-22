@@ -161,7 +161,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
 
 
-angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal',  function ($http, $filter, $modal) {
+angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal', 'Show',  function ($http, $filter, $modal, Show) {
   var that = this;
   this.days = showsByDay;
 
@@ -183,7 +183,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
 
   this.open = function () {
     $modal.open({
-      templateUrl: 'partials/directives/addShow.html',
+      templateUrl: 'partials/directives/addShow.html', // move to modals/
       controller: 'AddShowController'
     });
   };
