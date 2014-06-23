@@ -40,7 +40,6 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
     return 'airing';
   }
 
-  // Set the current status of the show
   $scope.formData = {
     status: getInitialStatus()
   };
@@ -75,9 +74,15 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
 
 
 
-angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http',  function AddShowController($scope, $modalInstance, $filter, $http) {
+angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', 'Show', 'day',  function AddShowController($scope, $modalInstance, $filter, $http, Show, day) {
+  if (day < 0 || day > 6) {
+    day = 1;
+  } else {
+    day += 1;
+  }
+
   var defaultShow = {
-    day: 1
+    day: day
   };
 
   $scope.show = {};
@@ -89,8 +94,8 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   };
 
   $scope.addShow = function () {
-    $http.post(apiURL + 'shows/', {'formData': $scope.show}).success(function (data) {
-      showsByDay[data.day - 1].shows.push(data);
+    Show.save($scope.show, function (show) {
+      showsByDay[show.day - 1].shows.push(show);
 
       console.log('Close modal');
       angular.copy(defaultShow, $scope.show);
@@ -175,10 +180,13 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
 
 
 
-  this.open = function () {
+  this.addShow = function (day) {
     $modal.open({
       templateUrl: '../../partials/modals/addShow.html',
-      controller: 'AddShowController'
+      controller: 'AddShowController',
+      resolve: {
+        day: function () { return day; }
+      }
     });
   };
 
