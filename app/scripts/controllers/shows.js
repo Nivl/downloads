@@ -77,7 +77,8 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   }
 
   var defaultShow = {
-    day: day
+    day: day,
+    isAiring: true
   };
 
   $scope.show = {};
