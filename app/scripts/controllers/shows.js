@@ -160,7 +160,6 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
     }
   };
 
-  // TODO: try Show.query(function (shows) { instead of the var shows[...]
   Show.query(function (shows) {
     var length = shows.length;
 
