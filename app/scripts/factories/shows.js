@@ -2,10 +2,9 @@
 
 angular.module('app-factories').factory('Show', ['$resource', function ($resource) {
 
-  return $resource('http://0.0.0.0:3000/shows/:Id/',
-    {Id: '@_Id'},
+  return $resource('http://0.0.0.0:3000/shows/:id/',
+    {id: '@_id'},
     {
       update: {method: 'PUT'}
-    }
-    );
+    });
 }]);
