@@ -6,9 +6,6 @@ angular.module('app-directives').directive('nvClass', ['$rootScope', function ($
     link: function (scope, el, attrs, controller) {
       attrs.$observe('nvClass', function (value) {
         $rootScope.$on('LVL-DRAG-START', function () {
-          console.log(
-            value
-          );
           attrs.$addClass(value);
         });
 
