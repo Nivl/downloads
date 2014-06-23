@@ -69,21 +69,27 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
   };
 }]);
 
-angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', 'Show', 'day',  function AddShowController($scope, $modalInstance, $filter, $http, Show, day) {
-  if (day < 0 || day > 6) {
-    day = 1;
-  } else {
-    day += 1;
+angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', 'Show', 'data', 'type',  function AddShowController($scope, $modalInstance, $filter, $http, Show, data, type) {
+  var show = null;
+  var defaultShow = {};
+
+  console.log(data);
+
+  if (type === 'edit') {
+    show = data;
+    $scope.show = show;
+    $scope.show.isAiring = typeof show.returnDate === 'undefined' || show.returnDate.length === 0;
+  } else if (data >= 0 && data <= 6) {
+    defaultShow = {
+      title: '',
+      day: data + 1,
+      isAiring: true
+    };
+
+    $scope.show = {};
+    angular.copy(defaultShow, $scope.show);
   }
 
-  var defaultShow = {
-    title: '',
-    day: day,
-    isAiring: true
-  };
-
-  $scope.show = {};
-  angular.copy(defaultShow, $scope.show);
 
   $scope.anim = {
     wikipedia: false,
@@ -91,13 +97,20 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   };
 
   $scope.addShow = function () {
-    Show.save($scope.show, function (show) {
-      showsByDay[show.day - 1].shows.push(show);
+    if (type === 'edit') {
+      show.$update({}, function () {
+        // TODO: swap if day has changed
+        $modalInstance.close();
+      });
+    } else {
+      Show.save($scope.show, function (show) {
+        showsByDay[show.day - 1].shows.push(show);
 
-      console.log('Close modal');
-      angular.copy(defaultShow, $scope.show);
-      // $modalInstance.close();
-    });
+        console.log('Close modal');
+        angular.copy(defaultShow, $scope.show);
+        // $modalInstance.close();
+      });
+    }
   };
 
   // TODO use the tvdb API to find the airing day or returning date
@@ -172,18 +185,16 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
     }
   });
 
-  this.addShow = function (day) {
+  // Takes the day number, or the show to edit
+  this.addOrEdit = function (data) {
     $modal.open({
       templateUrl: '../../partials/modals/addShow.html',
       controller: 'AddShowController',
       resolve: {
-        day: function () { return day; }
+        data: function () { return data; },
+        type: function () { return (data instanceof Show) ? ('edit') : ('add'); }
       }
     });
-  };
-
-  this.edit = function () {
-    console.log('todo');
   };
 
   this.remove = function (show) {
