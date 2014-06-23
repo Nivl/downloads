@@ -45,7 +45,6 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
     status: getInitialStatus()
   };
 
-  // TODO: FIX Cancel also fire removeShow
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
