@@ -77,6 +77,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   }
 
   var defaultShow = {
+    title: '',
     day: day,
     isAiring: true
   };
@@ -109,9 +110,9 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   };
 
   $scope.fetchWikipedia = function () {
-    $scope.anim.wikipedia = true;
-
     if ($scope.show.title.length > 0) {
+      $scope.anim.wikipedia = true;
+
       var encodedTitle = $scope.show.title.replace(/ /g, '_');
       var jsonUrl = 'https://en.wikipedia.org/w/api.php?format=json&action=query&callback=JSON_CALLBACK&titles=List_of_' + encodedTitle + '_episodes';
 
@@ -129,15 +130,13 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         $scope.anim.wikipedia = false;
       });
     }
-
   };
 
   $scope.fetchDownloadLink = function () {
-    $scope.anim.downloadLink = true;
     if ($scope.show.title.length > 0) {
-
+      $scope.anim.downloadLink = true;
+      $scope.anim.downloadLink = false;
     }
-    $scope.anim.downloadLink = false;
   };
 
   $scope.cancel = function () {
