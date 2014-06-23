@@ -177,7 +177,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
 
   this.open = function () {
     $modal.open({
-      templateUrl: 'partials/directives/addShow.html', // move to modals/
+      templateUrl: '../../partials/modals/addShow.html',
       controller: 'AddShowController'
     });
   };
