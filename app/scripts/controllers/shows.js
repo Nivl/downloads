@@ -72,8 +72,6 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
   };
 }]);
 
-
-
 angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', 'Show', 'day',  function AddShowController($scope, $modalInstance, $filter, $http, Show, day) {
   if (day < 0 || day > 6) {
     day = 1;
@@ -166,7 +164,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
   };
 
   // TODO: try Show.query(function (shows) { instead of the var shows[...]
-  var shows = Show.query(function () {
+  Show.query(function (shows) {
     var length = shows.length;
 
     for (var i = 0; i < length; i += 1) {
@@ -177,8 +175,6 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
       }
     }
   });
-
-
 
   this.addShow = function (day) {
     $modal.open({
@@ -205,47 +201,31 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
   };
 
   this.dropped = function (dragEl, dropEl) {
-    // use show.day - 1 instead of {{$parent.$index}}
     var dragId = angular.element(dragEl).attr('id');
-    var dropId = angular.element(dropEl).attr('id');
 
-    var newDay = parseInt(dropId, 10);
-    var currentDay = dragId.substr(-1);
+    var newDay = parseInt(angular.element(dropEl).attr('id'), 10);
+    var currentDay = dragId.substr(-1) - 1;
     var showId = dragId.substr(0, dragId.length - 2);
 
-    if (newDay >= 0 && newDay <= 6) {
-      var nbShows = that.days[currentDay].shows.length;
+    var showIndex = findShow(showId, currentDay);
 
-      for (var i = 0; i < nbShows; i += 1) {
-        if (that.days[currentDay].shows[i]._id === showId) {
-          that._swapShows(showId, currentDay, newDay, i);
-          break;
-        }
-      }
-    }
-  };
+    if (showIndex !== false) {
+      var show = that.days[currentDay].shows[showIndex];
+      show.day = newDay + 1;
 
-  this._swapShows = function (showId, currentDay, newDay, index) {
-    that.days[newDay].shows.push(that.days[currentDay].shows[index]);
-    that.days[currentDay].shows.splice(index, 1);
+      that.days[newDay].shows.push(that.days[currentDay].shows[showIndex]);
+      that.days[currentDay].shows.splice(showIndex, 1);
 
-    var url = apiURL + 'shows/' + showId + '/';
-    var data = {formData: {day: newDay + 1}};
+      show.$update({}, function (response) { return response; }, function (response) {
+        // on error, we revert
+        show.day = currentDay;
 
-    $http.put(url, data).error(function () {
-      that.revertSwap(showId, currentDay, newDay);
-    });
-  };
+        var newShowIndex = findShow(showId, newDay);
+        that.days[currentDay].shows.push(that.days[newDay].shows[newShowIndex]);
+        that.days[newDay].shows.splice(newShowIndex, 1);
 
-  this._revertSwap = function (showId, currentDay, newDay) {
-    var nbShows = that.days[newDay].shows.length;
-
-    for (var i = 0; i < nbShows; i += 1) {
-      if (that.days[newDay].shows[i]._id === showId) {
-        that.days[currentDay].shows.push(that.days[newDay].shows[i]);
-        that.days[newDay].shows.splice(i, 1);
-        break;
-      }
+        return response;
+      });
     }
   };
 }]);
