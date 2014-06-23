@@ -1,8 +1,5 @@
 'use strict';
 
-//TODO: Write a factory to clean the code
-
-var apiURL = 'http://0.0.0.0:3000/';
 var tz = moment().tz('America/Los_Angeles');
 
 var showsByDay = [
