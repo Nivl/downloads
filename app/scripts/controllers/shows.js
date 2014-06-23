@@ -27,6 +27,13 @@ function findShow(showId, day) {
   return false;
 }
 
+function swapShow(showId, from, to) {
+  var showIndex = findShow(showId, from);
+
+  showsByDay[to].shows.push(showsByDay[from].shows[showIndex]);
+  showsByDay[from].shows.splice(showIndex, 1);
+}
+
 angular.module('app-controllers').controller('RemoveShowController', ['$scope', '$modalInstance', '$http', 'show', function RemoveShowController($scope, $modalInstance, $http, show) {
   function getInitialStatus() {
     if (show.isCompleted) {
@@ -72,11 +79,11 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
 angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', 'Show', 'data', 'type',  function AddShowController($scope, $modalInstance, $filter, $http, Show, data, type) {
   var show = null;
   var defaultShow = {};
-
-  console.log(data);
+  var initialDay = 0;
 
   if (type === 'edit') {
     show = data;
+    initialDay = show.day;
     $scope.show = show;
     $scope.show.isAiring = typeof show.returnDate === 'undefined' || show.returnDate.length === 0;
   } else if (data >= 0 && data <= 6) {
@@ -90,7 +97,6 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     angular.copy(defaultShow, $scope.show);
   }
 
-
   $scope.anim = {
     wikipedia: false,
     downloadLink: false
@@ -98,8 +104,10 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
   $scope.addShow = function () {
     if (type === 'edit') {
-      show.$update({}, function () {
-        // TODO: swap if day has changed
+      show.$update({}, function (show) {
+        if (show.day !== initialDay) {
+          swapShow(show._id, initialDay - 1, show.day - 1);
+        }
         $modalInstance.close();
       });
     } else {
@@ -188,7 +196,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
   // Takes the day number, or the show to edit
   this.addOrEdit = function (data) {
     $modal.open({
-      templateUrl: '../../partials/modals/addShow.html',
+      templateUrl: '../../partials/modals/addShow.html', // TODO: Change title and submit button
       controller: 'AddShowController',
       resolve: {
         data: function () { return data; },
@@ -220,16 +228,13 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
       var show = that.days[currentDay].shows[showIndex];
       show.day = newDay + 1;
 
-      that.days[newDay].shows.push(that.days[currentDay].shows[showIndex]);
-      that.days[currentDay].shows.splice(showIndex, 1);
+      swapShow(showId, currentDay, newDay);
 
       show.$update({}, function (response) { return response; }, function (response) {
         // on error, we revert
         show.day = currentDay;
 
-        var newShowIndex = findShow(showId, newDay);
-        that.days[currentDay].shows.push(that.days[newDay].shows[newShowIndex]);
-        that.days[newDay].shows.splice(newShowIndex, 1);
+        swapShow(showId, newDay, currentDay);
 
         return response;
       });
