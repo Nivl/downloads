@@ -17,8 +17,8 @@ function findWeekIndex(name) {
     if (showsByDay[i].name === name) {
       return i + 1;
     }
-    return null;
   }
+  return null;
 }
 
 function findShow(showId, day) {
@@ -89,11 +89,11 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   var defaultShow = {};
   var initialDay = 0;
 
-  if (type === 'edit') {
+  if (type === 'edit') { // to rewrite
     show = data;
     initialDay = show.day;
     $scope.show = show;
-    $scope.show.isAiring = typeof show.returnDate === 'undefined' || show.returnDate.length === 0;
+    $scope.show.isAiring = typeof show.returnDate === 'undefined' || show.returnDate.length === 0; // no longer valid
   } else if (data >= 0 && data <= 6) {
     defaultShow = {
       ids: {},
@@ -149,8 +149,8 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
               $scope.show.synopsis = data.synopsis;
             }
 
-            if (data.AirTime) {
-              var info = data.AirTime.split(' at ');
+            if (data.Airtime) {
+              var info = data.Airtime.split(' at ');
               $scope.show.day = findWeekIndex(info[0]);
             }
 
