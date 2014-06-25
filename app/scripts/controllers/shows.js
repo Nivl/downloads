@@ -121,53 +121,58 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   $scope.fetchInfo = function () {
     $scope.anim.info = true;
 
-    var searchUri = 'https://api.themoviedb.org/3/search/tv?query=' + $scope.show.title + '&api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
+    if ($scope.show.title.length > 0) {
+      var searchUri = 'https://api.themoviedb.org/3/search/tv?query=' + $scope.show.title + '&api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
 
-    $http.jsonp(searchUri).success(function (data) {
-      /*jshint camelcase: false*/
-      if (data.total_results > 0) {
-        var result = data.results[0];
+      $http.jsonp(searchUri).success(function (data) {
+        /*jshint camelcase: false*/
+        if (data.total_results > 0) {
+          var result = data.results[0];
 
-        $scope.show.ids.tmdbId = result.id;
-        $scope.show.poster = result.poster_path;
+          $scope.show.ids.tmdbId = result.id;
+          $scope.show.poster = result.poster_path;
 
-        if ($scope.show.title !== result.original_name) {
-          $scope.show.title = result.original_name;
-          $scope.fetchWikipedia();
-        }
+          if ($scope.show.title !== result.original_name) {
+            $scope.show.title = result.original_name;
+            $scope.fetchWikipedia();
+          }
 
-        var idsUri = 'https://api.themoviedb.org/3/tv/' + result.id + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
-        $http.jsonp(idsUri).success(function (ids) {
-          $scope.show.ids.imdbId = ids.imdb_id;
-          $scope.show.ids.tvrageId = ids.tvrage_id;
+          var idsUri = 'https://api.themoviedb.org/3/tv/' + result.id + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
+          $http.jsonp(idsUri).success(function (ids) {
+            $scope.show.ids.imdbId = ids.imdb_id;
+            $scope.show.ids.tvrageId = ids.tvrage_id;
 
-          var infoUrl = 'http://0.0.0.0:3000/shows/fetch-info/';
-          $http.post(infoUrl, $scope.show).success(function (data) {
-            console.log(data);
+            var infoUrl = 'http://0.0.0.0:3000/shows/fetch-info/';
+            $http.post(infoUrl, $scope.show).success(function (data) {
+              console.log(data);
 
-            if (data.synopsis) {
-              $scope.show.synopsis = data.synopsis;
-            }
+              if (data.synopsis) {
+                $scope.show.synopsis = data.synopsis;
+              }
 
-            if (data.Airtime) {
-              var info = data.Airtime.split(' at ');
-              $scope.show.day = findWeekIndex(info[0]);
-            }
+              if (data.Airtime) {
+                var info = data.Airtime.split(' at ');
+                $scope.show.day = findWeekIndex(info[0]);
+              }
 
-            if (data['Next Episode'] && data['Next Episode'][2]) {
-              $scope.show.nextEpisode = {'title': data['Next Episode'][1], date: data['Next Episode'][2]};
-            }
+              if (data['Next Episode'] && data['Next Episode'][2]) {
+                $scope.show.nextEpisode = {'title': data['Next Episode'][1], date: data['Next Episode'][2]};
+              }
 
-            if (data['Latest Episode'] && data['Latest Episode'][2]) {
-              $scope.show.latestEpisode = {'title': data['Latest Episode'][1], date: data['Latest Episode'][2]};
-            }
+              if (data['Latest Episode'] && data['Latest Episode'][2]) {
+                $scope.show.latestEpisode = {'title': data['Latest Episode'][1], date: data['Latest Episode'][2]};
+              }
 
-            $scope.anim.info = false;
+              $scope.anim.info = false;
+            });
           });
-        });
 
-      } /*jshint camelcase: true*/
-    });
+        }
+        /*jshint camelcase: true*/
+      });
+    } else {
+      $scope.anim.info = false;
+    }
   };
 
   // TODO close old requests before
