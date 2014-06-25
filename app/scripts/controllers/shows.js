@@ -112,16 +112,10 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     downloadLink: false
   };
 
-  // TODO use the tvdb API to find the airing day or returning date
   // TODO Handle ' like in Grey's anatomy
   $scope.titleEntered = function () {
     $scope.show.title = $filter('capitalize')($scope.show.title).trim();
-
-    $scope.fetchInfo();
-    $scope.fetchWikipedia();
-    $scope.fetchDownloadLink();
   };
-
 
   // TODO close old requests before
   $scope.fetchInfo = function () {
