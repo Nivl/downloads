@@ -108,8 +108,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
   $scope.anim = {
     info: false,
-    wikipedia: false,
-    downloadLink: false
+    wikipedia: false
   };
 
   // TODO Handle ' like in Grey's anatomy
@@ -192,14 +191,6 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
       }).error(function () {
         $scope.anim.wikipedia = false;
       });
-    }
-  };
-
-  // TODO close old requests before
-  $scope.fetchDownloadLink = function () {
-    if ($scope.show.title.length > 0) {
-      $scope.anim.downloadLink = true;
-      $scope.anim.downloadLink = false;
     }
   };
 
