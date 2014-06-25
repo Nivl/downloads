@@ -118,6 +118,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   };
 
   // TODO close old requests before
+  // TODO restart the fetching if something fail
   $scope.fetchInfo = function () {
     $scope.anim.info = true;
 
