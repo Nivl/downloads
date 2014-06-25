@@ -236,19 +236,19 @@ module.exports = function (grunt) {
       }
     },
 
-    replace: {
-      app: {
-        files: [
-          {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
-        ]
-      },
-
-      dist: {
-        files: [
-          {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
-        ]
-      }
-    },
+//    replace: {
+//      app: {
+//        files: [
+//          {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
+//        ]
+//      },
+//
+//      dist: {
+//        files: [
+//          {src: '<%= yeoman.app %>/index.html', dest: '.tmp/index.html'}
+//        ]
+//      }
+//    },
 
       // Put files not handled in other tasks here
     copy: {
@@ -314,21 +314,21 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
-      'replace:app',
-      'concurrent:server',
+      //'replace:app',
+      //'concurrent:server',
       'neuter:app',
       'copy:fonts',
       'connect:livereload',
       'open',
       'watch'
-      ]);
+    ]);
   });
 
   grunt.registerTask('test', [
     'clean:server',
     'wiredep',
-    'replace:app',
-    'concurrent:test',
+    //'replace:app',
+    '//concurrent:test',
     'connect:test',
     'neuter:app',
     'mocha'
@@ -337,11 +337,11 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'wiredep',
-    'replace:dist',
+    //'replace:dist',
     'useminPrepare',
     'concurrent:dist',
     'neuter:app',
-    'concat',
+    //'concat',
     'cssmin',
     'uglify',
     'copy',

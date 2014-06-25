@@ -12,6 +12,14 @@ var showsByDay = [
   {name: 'Sunday', shows: []}
 ];
 
+function findWeekIndex(name) {
+  for (var i = 0; i < 7; i += 1) {
+    if (showsByDay[i].name === name) {
+      return i + 1;
+    }
+    return null;
+  }
+}
 
 function findShow(showId, day) {
   if (day >= 0 && day <= 6) {
@@ -88,6 +96,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     $scope.show.isAiring = typeof show.returnDate === 'undefined' || show.returnDate.length === 0;
   } else if (data >= 0 && data <= 6) {
     defaultShow = {
+      ids: {},
       title: '',
       day: data + 1,
       isAiring: true
@@ -98,27 +107,9 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   }
 
   $scope.anim = {
+    info: false,
     wikipedia: false,
     downloadLink: false
-  };
-
-  $scope.addShow = function () {
-    if (type === 'edit') {
-      show.$update({}, function (show) {
-        if (show.day !== initialDay) {
-          swapShow(show._id, initialDay - 1, show.day - 1);
-        }
-        $modalInstance.close();
-      });
-    } else {
-      Show.save($scope.show, function (show) {
-        showsByDay[show.day - 1].shows.push(show);
-
-        console.log('Close modal');
-        angular.copy(defaultShow, $scope.show);
-        // $modalInstance.close();
-      });
-    }
   };
 
   // TODO use the tvdb API to find the airing day or returning date
@@ -126,10 +117,66 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   $scope.titleEntered = function () {
     $scope.show.title = $filter('capitalize')($scope.show.title).trim();
 
+    $scope.fetchInfo();
     $scope.fetchWikipedia();
     $scope.fetchDownloadLink();
   };
 
+
+  // TODO close old requests before
+  $scope.fetchInfo = function () {
+    $scope.anim.info = true;
+
+    var searchUri = 'https://api.themoviedb.org/3/search/tv?query=' + $scope.show.title + '&api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
+
+    $http.jsonp(searchUri).success(function (data) {
+      /*jshint camelcase: false*/
+      if (data.total_results > 0) {
+        var result = data.results[0];
+
+        $scope.show.ids.tmdbId = result.id;
+        $scope.show.poster = result.poster_path;
+
+        if ($scope.show.title !== result.original_name) {
+          $scope.show.title = result.original_name;
+          $scope.fetchWikipedia();
+        }
+
+        var idsUri = 'https://api.themoviedb.org/3/tv/' + result.id + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
+        $http.jsonp(idsUri).success(function (ids) {
+          $scope.show.ids.imdbId = ids.imdb_id;
+          $scope.show.ids.tvrageId = ids.tvrage_id;
+
+          var infoUrl = 'http://0.0.0.0:3000/shows/fetch-info/';
+          $http.post(infoUrl, $scope.show).success(function (data) {
+            console.log(data);
+
+            if (data.synopsis) {
+              $scope.show.synopsis = data.synopsis;
+            }
+
+            if (data.AirTime) {
+              var info = data.AirTime.split(' at ');
+              $scope.show.day = findWeekIndex(info[0]);
+            }
+
+            if (data['Next Episode'] && data['Next Episode'][2]) {
+              $scope.show.nextEpisode = {'title': data['Next Episode'][1], date: data['Next Episode'][2]};
+            }
+
+            if (data['Latest Episode'] && data['Latest Episode'][2]) {
+              $scope.show.latestEpisode = {'title': data['Latest Episode'][1], date: data['Latest Episode'][2]};
+            }
+
+            $scope.anim.info = false;
+          });
+        });
+
+      } /*jshint camelcase: true*/
+    });
+  };
+
+  // TODO close old requests before
   $scope.fetchWikipedia = function () {
     if ($scope.show.title.length > 0) {
       $scope.anim.wikipedia = true;
@@ -153,10 +200,30 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     }
   };
 
+  // TODO close old requests before
   $scope.fetchDownloadLink = function () {
     if ($scope.show.title.length > 0) {
       $scope.anim.downloadLink = true;
       $scope.anim.downloadLink = false;
+    }
+  };
+
+  $scope.addShow = function () {
+    if (type === 'edit') {
+      show.$update({}, function (show) {
+        if (show.day !== initialDay) {
+          swapShow(show._id, initialDay - 1, show.day - 1);
+        }
+        $modalInstance.close();
+      });
+    } else {
+      Show.save($scope.show, function (show) {
+        showsByDay[show.day - 1].shows.push(show);
+
+        console.log('Close modal');
+        angular.copy(defaultShow, $scope.show);
+        // $modalInstance.close();
+      });
     }
   };
 
@@ -198,6 +265,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
     $modal.open({
       templateUrl: '../../partials/modals/addShow.html', // TODO: Change title and submit button
       controller: 'AddShowController',
+      size: 'lg',
       resolve: {
         data: function () { return data; },
         type: function () { return (data instanceof Show) ? ('edit') : ('add'); }

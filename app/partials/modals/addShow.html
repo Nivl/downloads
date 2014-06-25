@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h3 class="modal-title">Add a new show</h3>
+  <h1 class="modal-title">Add a new show</h1>
 </div>
 
 <form name="addShowForm" class="form-horizontal" role="form" ng-submit="addShowForm.$valid && addShow()" novalidate>
@@ -13,43 +13,25 @@
     </div>
 
     <div class="form-group">
-      <div class="col-sm-offset-4 col-sm-8">
-        <div class="checkbox">
-          <label>
-            <input ng-model="show.isAiring" type="checkbox"> is currently airing (so not in pause)
-          </label>
+      <label for="title" class="col-sm-4 control-label">Download link</label>
+      <div class="col-sm-8">
+        <div class="input-group">
+          <input type="text" class="form-control" id="downloadLink" ng-model="show.downloadLink" placeholder="DownloadLink">
+
+          <span class="input-group-btn">
+            <button type="button" ng-click="fetchDownloadLink()" class="btn btn-default">
+              <i ng-class="{spin: anim.wikipedia}" class="glyphicon glyphicon-refresh"></i>
+            </button>
+          </span>
         </div>
       </div>
     </div>
 
-
-    <div class="form-group" ng-show="show.isAiring">
-      <label for="airing-day" class="col-sm-4 control-label">Airing day</label>
-      <div class="col-sm-8">
-        <select id="airing-day" ng-model="show.day" name="day" class="form-control">
-          <option value="1">Monday</option>
-          <option value="2">Tuesday</option>
-          <option value="3">Wednesday</option>
-          <option value="4">Thursday</option>
-          <option value="5">Friday</option>
-          <option value="6">Saturday</option>
-          <option value="7">Sunday</option>
-        </select>
-      </div>
-    </div>
-
-
-    <div class="form-group" ng-hide="show.isAiring">
-      <label for="airing-day" class="col-sm-4 control-label">Returning date</label>
-
-      <div class="col-sm-8">
-        <p class="input-group">
-          <input type="text" ng-model="show.returningDate" class="form-control" />
-
-          <span class="input-group-btn">
-            <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-calendar"></i></button>
-          </span>
-        </p>
+    <div class="form-group">
+      <div class="col-sm-8 col-sm-offset-4">
+        <button type="button" ng-click="fetchInfo()" class="btn btn-default">
+          <i ng-class="{spin: anim.info}" class="glyphicon glyphicon-refresh"></i> Fetch data
+        </button>
       </div>
     </div>
 
@@ -70,17 +52,22 @@
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="title" class="col-sm-4 control-label">Download link</label>
-      <div class="col-sm-8">
-        <div class="input-group">
-          <input type="text" class="form-control" id="downloadLink" ng-model="show.downloadLink" placeholder="DownloadLink">
+    <div class="preview-show clearfix">
+      <h2>Details</h2>
 
-          <span class="input-group-btn">
-            <button type="button" ng-click="fetchDownloadLink()" class="btn btn-default">
-              <i ng-class="{spin: anim.wikipedia}" class="glyphicon glyphicon-refresh"></i>
-            </button>
-          </span>
+      <img class="poster" ng-src="https://image.tmdb.org/t/p/w185/{{show.poster}}" />
+
+      <div class="synopsis">
+        <h3>Synopsis</h3>
+        <p>{{show.synopsis}}</p>
+      </div>
+
+      <div class="episode">
+        <div ng-show="show.latestEpisode">
+          <strong>Latest Episode:</strong> {{show.latestEpisode.title }} on {{show.latestEpisode.date }}
+        </div>
+        <div ng-show="show.nextEpisode">
+          <strong>Next Episode:</strong> {{show.nextEpisode.title }} on {{show.nextEpisode.date }}
         </div>
       </div>
     </div>

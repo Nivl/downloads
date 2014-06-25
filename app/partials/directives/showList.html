@@ -18,12 +18,16 @@
 
   <div id="show-{{show._id}}" class="panel-collapse collapse">
     <div class="panel-body">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ornare nisl ante, id adipiscing leo fermentum id. Donec auctor erat elit, at scelerisque turpis pellentesque in. Fusce et justo eu felis lacinia ornare. Vestibulum nisi est, aliquam sit amet eleifend eu, euismod quis sem. Nunc id neque in odio fermentum dictum in in nisl.
+      <div class="preview-show clearfix">
+        <img class="poster" ng-src="https://image.tmdb.org/t/p/w185/{{show.poster}}" />
 
-      <ul class="list-unstyled list-inline control-links pull-right">
-        <li><a class="text-warning" ng-click="showCtrl.addOrEdit(show)">Edit</a></li>
-        <li><a class="text-danger" ng-click="showCtrl.remove(show)">Complete/Cancel</a></li>
-      </ul>
+        {{show.synopsis}}
+        
+        <ul class="list-unstyled list-inline control-links pull-right">
+          <li><a class="text-warning" ng-click="showCtrl.addOrEdit(show)">Edit</a></li>
+          <li><a class="text-danger" ng-click="showCtrl.remove(show)">Complete/Cancel</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
