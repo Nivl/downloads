@@ -89,17 +89,14 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   var defaultShow = {};
   var initialDay = 0;
 
-  if (type === 'edit') { // to rewrite
+  if (type === 'edit') {
     show = data;
-    initialDay = show.day;
+    initialDay = show.day; // needed to see changed day
     $scope.show = show;
-    $scope.show.isAiring = typeof show.returnDate === 'undefined' || show.returnDate.length === 0; // no longer valid
   } else if (data >= 0 && data <= 6) {
     defaultShow = {
       ids: {},
-      title: '',
-      day: data + 1,
-      isAiring: true
+      title: ''
     };
 
     $scope.show = {};
