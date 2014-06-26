@@ -84,10 +84,19 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
   };
 }]);
 
-angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', 'Show', 'data', 'type',  function AddShowController($scope, $modalInstance, $filter, $http, Show, data, type) {
+angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', '$q', 'Show', 'data', 'type',  function AddShowController($scope, $modalInstance, $filter, $http, $q, Show, data, type) {
   var show = null;
   var defaultShow = {};
   var initialDay = 0;
+
+  var httpRequests = {
+    wikipedia: null,
+    info: {
+      searchShow: null,
+      getIds: null,
+      fetchInfo: null
+    }
+  };
 
   if (type === 'edit') {
     show = data;
@@ -113,15 +122,49 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     $scope.show.title = $filter('capitalize')($scope.show.title).trim();
   };
 
-  // TODO close old requests before
-  // TODO restart the fetching if something fail
+  $scope.cancelRequests = function () {
+    if (httpRequests.info.fetchInfo !== null) {
+      httpRequests.info.fetchInfo.resolve('canceled by user');
+      httpRequests.info.fetchInfo = null;
+    }
+
+    if (httpRequests.info.getIds) {
+      httpRequests.info.getIds.resolve('canceled by user');
+      httpRequests.info.getIds = null;
+    }
+
+    if (httpRequests.info.searchShow) {
+      httpRequests.info.searchShow.resolve('canceled by user');
+      httpRequests.info.searchShow = null;
+    }
+
+    if (httpRequests.wikipedia !== null) {
+      httpRequests.wikipedia.resolve('canceled by user');
+      httpRequests.wikipedia = null;
+    }
+
+    $scope.anim.info = false;
+    $scope.anim.wikipedia = false;
+  };
+
+  function startRequests() {
+    $scope.cancelRequests();
+
+    httpRequests.info.fetchInfo = $q.defer();
+    httpRequests.info.searchShow = $q.defer();
+    httpRequests.info.getIds = $q.defer();
+    httpRequests.info.wikipedia = $q.defer();
+  }
+
   $scope.fetchInfo = function () {
+    startRequests();
+
     $scope.anim.info = true;
 
     if ($scope.show.title.length > 0) {
       var searchUri = 'https://api.themoviedb.org/3/search/tv?query=' + $scope.show.title + '&api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
 
-      $http.jsonp(searchUri).success(function (data) {
+      $http.jsonp(searchUri, {timeout: httpRequests.info.searchShow.promise}).success(function (data) {
         /*jshint camelcase: false*/
         if (data.total_results > 0) {
           var result = data.results[0];
@@ -135,12 +178,12 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
           }
 
           var idsUri = 'https://api.themoviedb.org/3/tv/' + result.id + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
-          $http.jsonp(idsUri).success(function (ids) {
+          $http.jsonp(idsUri, {timeout: httpRequests.info.getIds.promise}).success(function (ids) {
             $scope.show.ids.imdbId = ids.imdb_id;
             $scope.show.ids.tvrageId = ids.tvrage_id;
 
             var infoUrl = 'http://0.0.0.0:3000/shows/fetch-info/';
-            $http.post(infoUrl, $scope.show).success(function (data) {
+            $http.post(infoUrl, $scope.show, {timeout: httpRequests.info.fetchInfo.promise}).success(function (data) {
               console.log(data);
 
               if (data.synopsis) {
@@ -172,8 +215,9 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     }
   };
 
-  // TODO close old requests before
   $scope.fetchWikipedia = function () {
+    startRequests();
+
     if ($scope.show.title.length > 0) {
       $scope.anim.wikipedia = true;
 
@@ -181,7 +225,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
       var jsonUrl = 'https://en.wikipedia.org/w/api.php?format=json&action=query&callback=JSON_CALLBACK&titles=List_of_' + encodedTitle + '_episodes';
 
       // todo use .always
-      $http.jsonp(jsonUrl).success(function (data) {
+      $http.jsonp(jsonUrl, {timeout: httpRequests.wikipedia.promise}).success(function (data) {
         try {
           if (data.query.pages[-1].missing === '') {
             // TODO: fallback on the page of the show
