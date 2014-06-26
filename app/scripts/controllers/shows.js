@@ -94,7 +94,8 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     info: {
       searchShow: null,
       getIds: null,
-      fetchInfo: null
+      fetchTvdb: null,
+      fetchTvRage: null
     }
   };
 
@@ -123,17 +124,22 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   };
 
   $scope.cancelRequests = function () {
-    if (httpRequests.info.fetchInfo !== null) {
-      httpRequests.info.fetchInfo.resolve('canceled by user');
-      httpRequests.info.fetchInfo = null;
+    if (httpRequests.info.fetchTvdb !== null) {
+      httpRequests.info.fetchTvdb.resolve('canceled by user');
+      httpRequests.info.fetchTvdb = null;
     }
 
-    if (httpRequests.info.getIds) {
+    if (httpRequests.info.fetchTvRage !== null) {
+      httpRequests.info.fetchTvRage.resolve('canceled by user');
+      httpRequests.info.fetchTvRage = null;
+    }
+
+    if (httpRequests.info.getIds !== null) {
       httpRequests.info.getIds.resolve('canceled by user');
       httpRequests.info.getIds = null;
     }
 
-    if (httpRequests.info.searchShow) {
+    if (httpRequests.info.searchShow !== null) {
       httpRequests.info.searchShow.resolve('canceled by user');
       httpRequests.info.searchShow = null;
     }
@@ -150,74 +156,117 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   function startRequests() {
     $scope.cancelRequests();
 
-    httpRequests.info.fetchInfo = $q.defer();
+    httpRequests.info.fetchTvdb = $q.defer();
+    httpRequests.info.fetchTvRage = $q.defer();
     httpRequests.info.searchShow = $q.defer();
     httpRequests.info.getIds = $q.defer();
-    httpRequests.info.wikipedia = $q.defer();
+    httpRequests.wikipedia = $q.defer();
   }
 
-  $scope.fetchInfo = function () {
+  function queryTmdbForIds() {
+    var idsUri = 'https://api.themoviedb.org/3/tv/' + $scope.show.ids.tmdbId + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
+
+    $http.jsonp(idsUri, {timeout: httpRequests.info.getIds.promise}).success(function (ids) {
+      /*jshint camelcase: false*/
+      $scope.show.ids.imdbId = ids.imdb_id;
+      $scope.show.ids.tvrageId = ids.tvrage_id;
+      /*jshint camelcase: true*/
+
+      queryTvdb();
+
+      if ($scope.show.ids.tvrageId) {
+        queryTvRage();
+      }
+    });
+  }
+
+  function queryTvdb() {
+    console.log('queryTvdb');
+    var tvdbUrl = 'http://0.0.0.0:3000/shows/fetch/tvdb/';
+
+    $http.post(tvdbUrl, $scope.show, {timeout: httpRequests.info.fetchTvdb.promise}).success(function (data) {
+      console.log('tvdb: success');
+
+      if (_.isEmpty(data) === false) {
+        $scope.show.synopsis = data.Overview;
+
+        if ($scope.show.ids.tvrageId === null) {
+          if ($scope.show.title !== data.Overview) {
+            $scope.show.alternateTitle = data.SeriesName;
+            queryTvRage();
+          }
+        } else {
+          $scope.anim.info = false;
+        }
+      } // handle when empty
+    });
+  }
+
+  function queryTvRage() {
+    console.log('queryTvRage');
+    var tvRageUrl = 'http://0.0.0.0:3000/shows/fetch/tvrage/';
+
+    $http.post(tvRageUrl, $scope.show, {timeout: httpRequests.info.fetchTvRage.promise}).success(function (data) {
+      if (_.isEmpty(data) === false) {
+        if (data.id) {
+          $scope.show.ids.tvrageId = data.id;
+        }
+
+        if (data.Airtime) {
+          var info = data.Airtime.split(' at ');
+          $scope.show.day = findWeekIndex(info[0]);
+        }
+
+        if (data['Next Episode'] && data['Next Episode'][2]) {
+          $scope.show.nextEpisode = {'title': data['Next Episode'][1], date: data['Next Episode'][2]};
+        }
+
+        if (data['Latest Episode'] && data['Latest Episode'][2]) {
+          $scope.show.latestEpisode = {'title': data['Latest Episode'][1], date: data['Latest Episode'][2]};
+        }
+        $scope.anim.info = false;
+      } // handle when empty
+    });
+  }
+
+  function queryTmdb() {
+    var searchUri = 'https://api.themoviedb.org/3/search/tv?query=' + $scope.show.title + '&api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
+
+    // handle search fail
+    $http.jsonp(searchUri, {timeout: httpRequests.info.searchShow.promise}).success(function (data) {
+      /*jshint camelcase: false*/
+      if (data.total_results > 0) {
+        var result = data.results[0];
+
+        $scope.show.ids.tmdbId = result.id;
+        $scope.show.poster = result.poster_path;
+
+        if ($scope.show.title !== result.original_name) {
+          $scope.show.title = result.original_name;
+          $scope.fetchWikipedia();
+        }
+
+        queryTmdbForIds();
+      }
+      /*jshint camelcase: true*/
+    });
+  }
+
+  $scope.fetchInfo = function () { // TODO: Reset the show before making the request
     startRequests();
+
+    $scope.fetchWikipedia();
 
     $scope.anim.info = true;
 
     if ($scope.show.title.length > 0) {
-      var searchUri = 'https://api.themoviedb.org/3/search/tv?query=' + $scope.show.title + '&api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
-
-      $http.jsonp(searchUri, {timeout: httpRequests.info.searchShow.promise}).success(function (data) {
-        /*jshint camelcase: false*/
-        if (data.total_results > 0) {
-          var result = data.results[0];
-
-          $scope.show.ids.tmdbId = result.id;
-          $scope.show.poster = result.poster_path;
-
-          if ($scope.show.title !== result.original_name) {
-            $scope.show.title = result.original_name;
-            $scope.fetchWikipedia();
-          }
-
-          var idsUri = 'https://api.themoviedb.org/3/tv/' + result.id + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
-          $http.jsonp(idsUri, {timeout: httpRequests.info.getIds.promise}).success(function (ids) {
-            $scope.show.ids.imdbId = ids.imdb_id;
-            $scope.show.ids.tvrageId = ids.tvrage_id;
-
-            var infoUrl = 'http://0.0.0.0:3000/shows/fetch-info/';
-            $http.post(infoUrl, $scope.show, {timeout: httpRequests.info.fetchInfo.promise}).success(function (data) {
-              console.log(data);
-
-              if (data.synopsis) {
-                $scope.show.synopsis = data.synopsis;
-              }
-
-              if (data.Airtime) {
-                var info = data.Airtime.split(' at ');
-                $scope.show.day = findWeekIndex(info[0]);
-              }
-
-              if (data['Next Episode'] && data['Next Episode'][2]) {
-                $scope.show.nextEpisode = {'title': data['Next Episode'][1], date: data['Next Episode'][2]};
-              }
-
-              if (data['Latest Episode'] && data['Latest Episode'][2]) {
-                $scope.show.latestEpisode = {'title': data['Latest Episode'][1], date: data['Latest Episode'][2]};
-              }
-
-              $scope.anim.info = false;
-            });
-          });
-
-        }
-        /*jshint camelcase: true*/
-      });
+      queryTmdb();
     } else {
       $scope.anim.info = false;
     }
   };
 
   $scope.fetchWikipedia = function () {
-    startRequests();
-
     if ($scope.show.title.length > 0) {
       $scope.anim.wikipedia = true;
 
