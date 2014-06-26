@@ -142,21 +142,6 @@ body > header {
   }
 }
 
-h2 {
-  .add-link {
-    font-size: 20px;
-    opacity: 0;
-    transition: opacity 0.2s linear;
-
-  }
-
-  &:hover {
-    .add-link {
-      opacity: 1;
-    }
-  }
-}
-
 .panel {
   margin-bottom: 20px !important;
 }
@@ -174,6 +159,28 @@ h2 {
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+
+.add-link {
+  position: relative;
+  top: -50px;
+  left: -45px;
+  background-color: #5e7a9b;
+  border: 1px solid #5e7a9b;
+  border-radius: 0;
+  border-bottom-right-radius: 23px;
+  color: white;
+  transition: left 0.5s  cubic-bezier(0.680, -0.550, 0.265, 1.550);
+
+  span {
+    margin-right: 10px;
+  }
+
+  &:hover {
+    color: white;
+    left: -5px;
+  }
+}
 
 // Bootstrap fix
 
@@ -209,10 +216,6 @@ a {
   .poster {
     float: left;
     margin-right: 20px;
-  }
-
-  .synopsis {
-
   }
 }
 

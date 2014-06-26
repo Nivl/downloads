@@ -34,15 +34,17 @@
     </header>
 
     <div id="body">
+      <a class="add-link btn" ng-click="showCtrl.addOrEdit()">
+        <span>Add</span>
+        <i class="glyphicon glyphicon-plus-sign"></i>
+      </a>
+
         <div class="container-fluid">
             <div ng-class-even="'row'" ng-repeat="day in showCtrl.days">
                 <div ng-class-odd="{'col-md-offset-1':!$last}" ng-class="{'col-md-5':!$last, 'col-md-6 col-md-offset-3':$last}">
                     <article>
                         <h2 class="text-center">
                           {{day.name}}
-                          <a class="add-link" ng-click="showCtrl.addOrEdit($index)">
-                            <i class="glyphicon glyphicon-plus-sign"></i>
-                          </a>
                         </h2>
 
                       <div class="panel-group" nv-class="drop-area" id="{{$index}}" nv-drop-target='true' nv-drop='showCtrl.dropped(dragEl, dropEl)'>

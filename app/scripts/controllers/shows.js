@@ -299,7 +299,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
       controller: 'AddShowController',
       size: 'lg',
       resolve: {
-        data: function () { return data; },
+        data: function () { return data || null; },
         type: function () { return (data instanceof Show) ? ('edit') : ('add'); }
       }
     });
