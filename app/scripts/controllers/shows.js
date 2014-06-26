@@ -1,5 +1,7 @@
 'use strict';
 
+// TODO: split the file
+
 var tz = moment().tz('America/Los_Angeles');
 
 var showsByDay = [
@@ -252,7 +254,9 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     });
   }
 
-  $scope.fetchInfo = function () { // TODO: Reset the show before making the request
+  // TODO: Reset the show before making the request
+  // TODO: Allow the possibility to force ids
+  $scope.fetchInfo = function () {
     startRequests();
 
     $scope.fetchWikipedia();
@@ -266,6 +270,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     }
   };
 
+  // TODO: use alternate name
   $scope.fetchWikipedia = function () {
     if ($scope.show.title.length > 0) {
       $scope.anim.wikipedia = true;
