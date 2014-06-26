@@ -48,13 +48,12 @@
       </div>
     </div>
 
-    <div class="preview-show clearfix">
-      <h2>Details</h2>
-
+    <h2>Preview</h2>
+    <div class="preview-show clearfix" ng-show="show.poster">
       <img class="poster" ng-src="https://image.tmdb.org/t/p/w185/{{show.poster}}" />
 
       <div class="synopsis">
-        <h3>Synopsis</h3>
+        <h3>{{show.title}}</h3>
         <p>{{show.synopsis}}</p>
       </div>
 
