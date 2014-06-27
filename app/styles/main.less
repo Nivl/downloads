@@ -165,7 +165,7 @@ body > header {
   position: relative;
   top: -50px;
   left: -45px;
-  background-color: #5e7a9b;
+  background: linear-gradient(#5e7a9b,#6987AA);
   border: 1px solid #5e7a9b;
   border-radius: 0;
   border-bottom-right-radius: 23px;
@@ -179,6 +179,31 @@ body > header {
   &:hover {
     color: white;
     left: -5px;
+  }
+
+  &:active {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background: linear-gradient(#5e7a9b,#6987AA);
+  }
+}
+
+.fetching-buttons {
+  padding-top: 12px;
+}
+
+.fetching-info {
+  font-size: 13px;
+
+  i {
+    font-size: 10px;
+    margin-left: 3px;
+
+    &.glyphicon-refresh {
+      -moz-animation: spin 0.5s linear infinite;
+      -webkit-animation: spin 0.5s linear infinite;
+      animation: spin 0.5s linear infinite;
+    }
   }
 }
 
@@ -266,10 +291,6 @@ b, strong {
   transform: none !important;
   -ms-transform: none !important;
   -o-transform: none !important;
-  transform: none !important;
-
-  //animation: paper-dialog-transition-center-keyframes 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  //-webkit-animation: paper-dialog-transition-center-keyframes 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 

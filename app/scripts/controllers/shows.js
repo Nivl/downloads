@@ -86,6 +86,9 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
   };
 }]);
 
+// todo replace animInfo by $scope.fetching
+// todo reset the fetching object when we refetch the data
+// todo put on error the non fetched data when the user cancel a request
 angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', '$q', 'Show', 'data', 'type',  function AddShowController($scope, $modalInstance, $filter, $http, $q, Show, data, type) {
   var show = null;
   var defaultShow = {};
@@ -98,6 +101,21 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
       getIds: null,
       fetchTvdb: null,
       fetchTvRage: null
+    }
+  };
+
+  $scope.fetching = {
+    tmdb : {
+      text: 'text-danger',
+      icon: 'glyphicon-remove'
+    },
+    tvdb : {
+      text: 'text-danger',
+      icon: 'glyphicon-remove'
+    },
+    tvrage : {
+      text: 'text-danger',
+      icon: 'glyphicon-remove'
     }
   };
 
@@ -166,30 +184,47 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   }
 
   function queryTmdbForIds() {
+    $scope.fetching.tmdb.text = '';
+    $scope.fetching.tmdb.icon = 'glyphicon-refresh';
+
     var idsUri = 'https://api.themoviedb.org/3/tv/' + $scope.show.ids.tmdbId + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
 
     $http.jsonp(idsUri, {timeout: httpRequests.info.getIds.promise}).success(function (ids) {
-      /*jshint camelcase: false*/
-      $scope.show.ids.imdbId = ids.imdb_id;
-      $scope.show.ids.tvrageId = ids.tvrage_id;
-      /*jshint camelcase: true*/
+      if (_.isEmpty(ids) === false) {
+        $scope.fetching.tmdb.text = 'text-success';
+        $scope.fetching.tmdb.icon = 'glyphicon-ok';
 
-      queryTvdb();
+        /*jshint camelcase: false*/
+        $scope.show.ids.imdbId = ids.imdb_id;
+        $scope.show.ids.tvrageId = ids.tvrage_id;
+        /*jshint camelcase: true*/
 
-      if ($scope.show.ids.tvrageId) {
-        queryTvRage();
+        queryTvdb();
+
+        if ($scope.show.ids.tvrageId) {
+          queryTvRage();
+        }
+      } else {
+        $scope.fetching.tmdb.text = 'text-error';
+        $scope.fetching.tmdb.icon = 'glyphicon-remove';
       }
+    }).error(function () {
+      $scope.fetching.tmdb.text = 'text-error';
+      $scope.fetching.tmdb.icon = 'glyphicon-remove';
     });
   }
 
   function queryTvdb() {
-    console.log('queryTvdb');
     var tvdbUrl = 'http://0.0.0.0:3000/shows/fetch/tvdb/';
 
-    $http.post(tvdbUrl, $scope.show, {timeout: httpRequests.info.fetchTvdb.promise}).success(function (data) {
-      console.log('tvdb: success');
+    $scope.fetching.tvdb.text = '';
+    $scope.fetching.tvdb.icon = 'glyphicon-refresh';
 
+    $http.post(tvdbUrl, $scope.show, {timeout: httpRequests.info.fetchTvdb.promise}).success(function (data) {
       if (_.isEmpty(data) === false) {
+        $scope.fetching.tvdb.text = 'text-success';
+        $scope.fetching.tvdb.icon = 'glyphicon-ok';
+
         $scope.show.synopsis = data.Overview;
 
         if ($scope.show.ids.tvrageId === null) {
@@ -197,19 +232,28 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
             $scope.show.alternateTitle = data.SeriesName;
             queryTvRage();
           }
-        } else {
-          $scope.anim.info = false;
         }
-      } // handle when empty
+      } else {
+        $scope.fetching.tvdb.text = 'text-error';
+        $scope.fetching.tvdb.icon = 'glyphicon-remove';
+      }
+    }).error(function () {
+      $scope.fetching.tvdb.text = 'text-error';
+      $scope.fetching.tvdb.icon = 'glyphicon-remove';
     });
   }
 
   function queryTvRage() {
-    console.log('queryTvRage');
+    $scope.fetching.tvrage.text = '';
+    $scope.fetching.tvrage.icon = 'glyphicon-refresh';
+
     var tvRageUrl = 'http://0.0.0.0:3000/shows/fetch/tvrage/';
 
     $http.post(tvRageUrl, $scope.show, {timeout: httpRequests.info.fetchTvRage.promise}).success(function (data) {
       if (_.isEmpty(data) === false) {
+        $scope.fetching.tvrage.text = 'text-success';
+        $scope.fetching.tvrage.icon = 'glyphicon-ok';
+
         if (data.id) {
           $scope.show.ids.tvrageId = data.id;
         }
@@ -226,8 +270,13 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         if (data['Latest Episode'] && data['Latest Episode'][2]) {
           $scope.show.latestEpisode = {'title': data['Latest Episode'][1], date: data['Latest Episode'][2]};
         }
-        $scope.anim.info = false;
-      } // handle when empty
+      } else {
+        $scope.fetching.tvrage.text = 'text-error';
+        $scope.fetching.tvrage.icon = 'glyphicon-remove';
+      }
+    }).error(function () {
+      $scope.fetching.tvrage.text = 'text-error';
+      $scope.fetching.tvrage.icon = 'glyphicon-remove';
     });
   }
 
@@ -249,8 +298,14 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         }
 
         queryTmdbForIds();
+      } else {
+        $scope.fetching.tmdb.text = 'text-error';
+        $scope.fetching.tmdb.icon = 'glyphicon-remove';
       }
       /*jshint camelcase: true*/
+    }).error(function () {
+      $scope.fetching.tmdb.text = 'text-error';
+      $scope.fetching.tmdb.icon = 'glyphicon-remove';
     });
   }
 
