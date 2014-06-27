@@ -228,3 +228,52 @@ b, strong {
   filter: alpha(opacity=10);
   opacity: .1;
 }
+
+.modal.in .modal-dialog {
+  -webkit-transition: none !important;
+  transition: none !important;
+  -webkit-transform: none !important;
+  transform: none !important;
+  -ms-transform: none !important;
+  -o-transform: none !important;
+  transform: none !important;
+
+  //animation: paper-dialog-transition-center-keyframes 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  //-webkit-animation: paper-dialog-transition-center-keyframes 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.modal.in {
+  -webkit-transform: scale(1) !important;
+  -moz-transform: scale(1) !important;
+  -ms-transform: scale(1) !important;
+  transform: scale(1) !important;
+}
+
+.modal.fade {
+  -webkit-transform: scale(0.7);
+  -moz-transform: scale(0.7);
+  -ms-transform: scale(0.7);
+  transform: scale(0.7);
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+.modal.fade .modal-dialog {
+  -webkit-transition: none !important;
+  transition: none !important;
+  -webkit-transform: none !important;
+  transform: none !important;
+  -ms-transform: none !important;
+  -o-transform: none !important;
+  transform: none !important;
+
+  //animation: paper-dialog-transition-center-keyframes 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  //-webkit-animation: paper-dialog-transition-center-keyframes 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+
+.modal-header {
+  background-color: #428bca;
+  color: white !important;
+}
