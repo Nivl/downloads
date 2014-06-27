@@ -1,9 +1,8 @@
 'use strict';
 
+// TODO put in an global object + wrap in a anonymous function not to spam the global space
 // TODO Handle edition (add the move if the field is not empty)
 function parseLabel(element) {
-  console.log(element);
-
   var $el = $(element);
   var $form = $('#' + $el.attr('for'));
 
