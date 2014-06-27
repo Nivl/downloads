@@ -312,12 +312,14 @@ input[type=text] {
 }
 
 label {
+  cursor: text;
   position: absolute;
   transform: none;
   transition: transform 0.2s cubic-bezier(0.2, 0, 0.03, 1);
   color: #bebcbc;
 
   &.move {
+    cursor: default;
     transform: scale(0.7) translateX(-13%) translateY(-27px);
     color: #428bca;
   }
