@@ -23,21 +23,32 @@
 
     <div class="form-group">
       <div class="col-sm-3 col-sm-offset-3 fetching-buttons">
-        <button type="button" ng-click="fetchInfo()" class="btn btn-default" ng-class="{disabled: anim.info}">
-          <i ng-class="{spin: anim.info}" class="glyphicon glyphicon-refresh"></i> Fetch data
+        <button type="button" ng-click="fetchInfo()" class="btn btn-default"
+                ng-class="{disabled: fetching.isFetching('tmdb') || fetching.isFetching('tvdb') || fetching.isFetching('tvrage')}">
+          <i class="glyphicon glyphicon-refresh"
+             ng-class="{spin: fetching.isFetching('tmdb') || fetching.isFetching('tvdb') || fetching.isFetching('tvrage')}"></i> Fetch data
         </button>
 
-        <button type="button" ng-click="cancelRequests()" class="btn btn-warning" ng-class="{disabled: anim.info === false}">
+        <button type="button" ng-click="cancelRequests()" class="btn btn-warning"
+                ng-class="{disabled: !fetching.isFetching('tmdb') && !fetching.isFetching('tvdb') && !fetching.isFetching('tvrage')}">
           <i class="glyphicon glyphicon-remove"></i> Stop
         </button>
       </div>
+
       <div class="col-sm-6">
         <ul class="fetching-info list-unstyled">
-          <li class="api-tmdb" ng-class="fetching.tmdb.text">Fetching The Movie Database <i class="glyphicon" ng-class="fetching.tmdb.icon"></i></li>
-          <li class="api-tvdb" ng-class="fetching.tvdb.text">Fetching The TV Database <i class="glyphicon" ng-class="fetching.tvdb.icon"></i></li>
-          <li class="api-tvrage" ng-class="fetching.tvrage.text">Fetching TV Rage Database <i class="glyphicon" ng-class="fetching.tvrage.icon"></i></li>
-        </ul>
+          <li class="api-tmdb" ng-class="fetching.getClass('tmdb')">
+            Fetching The Movie Database <i class="glyphicon" ng-class="fetching.getIcon('tmdb')"></i>
+          </li>
 
+          <li class="api-tvdb" ng-class="fetching.getClass('tvdb')">
+            Fetching The TV Database <i class="glyphicon" ng-class="fetching.getIcon('tvdb')"></i>
+          </li>
+
+          <li class="api-tvrage" ng-class="fetching.getClass('tvrage')">
+            Fetching TV Rage Database <i class="glyphicon" ng-class="fetching.getIcon('tvrage')"></i>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -62,7 +73,7 @@
   </div>
 
   <div class="modal-footer">
-    <button type="submit" class="btn btn-primary" ng-class="{disabled: anim.info}">Add</button>
+    <button type="submit" class="btn btn-primary" ng-class="{disabled: fetching.isFetching('tmdb') || fetching.isFetching('tvdb') || fetching.isFetching('tvrage')}">Add</button>
     <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
   </div>
 </form>

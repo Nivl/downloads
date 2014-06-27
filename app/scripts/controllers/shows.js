@@ -86,7 +86,6 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
   };
 }]);
 
-// todo replace animInfo by $scope.fetching
 // todo reset the fetching object when we refetch the data
 // todo put on error the non fetched data when the user cancel a request
 angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', '$q', 'Show', 'data', 'type',  function AddShowController($scope, $modalInstance, $filter, $http, $q, Show, data, type) {
@@ -105,17 +104,84 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   };
 
   $scope.fetching = {
-    tmdb : {
-      text: 'text-danger',
-      icon: 'glyphicon-remove'
+    tmdb : 1,
+    tvdb : 1,
+    tvrage : 1,
+
+    data: {
+      values: { //values are based on indexes (for icons and classes)
+        fetching: 0,
+        error: 1,
+        success: 2
+      },
+      icons: [
+        'glyphicon-refresh',
+        'glyphicon-remove',
+        'glyphicon-ok'
+      ],
+      classes: [
+        '',
+        'text-danger',
+        'text-success'
+      ]
     },
-    tvdb : {
-      text: 'text-danger',
-      icon: 'glyphicon-remove'
+
+    getIcon: function (api) {
+      if (_.has(this, api) && _.isNumber(this[api])) {
+        var val = this[api];
+
+        return this.data.icons[val];
+      }
+
+      return '';
     },
-    tvrage : {
-      text: 'text-danger',
-      icon: 'glyphicon-remove'
+
+    getClass: function (api) {
+      if (_.has(this, api) && _.isNumber(this[api])) {
+        var val = this[api];
+
+        return this.data.classes[val];
+      }
+
+      return '';
+    },
+
+    setSuccess: function (api) {
+      if (_.has(this, api) && _.isNumber(this[api])) {
+        this[api] =  this.data.values.success;
+      }
+
+      return '';
+    },
+
+    hasSucceed: function (api) {
+      return (_.has(this, api) && _.isNumber(this[api])) ? (this[api] === this.data.values.success) : (false);
+    },
+
+    setError: function (api) {
+      if (_.has(this, api) && _.isNumber(this[api])) {
+        this[api] = this.data.values.error;
+        return true;
+      }
+
+      return false;
+    },
+
+    hasFailed: function (api) {
+      return (_.has(this, api) && _.isNumber(this[api])) ? (this[api] === this.data.values.error) : (false);
+    },
+
+    setFetching: function (api) {
+      if (_.has(this, api) && _.isNumber(this[api])) {
+        this[api] = this.data.values.fetching;
+        return true;
+      }
+
+      return false;
+    },
+
+    isFetching: function (api) {
+      return (_.has(this, api) && _.isNumber(this[api])) ? (this[api] === this.data.values.fetching) : (false);
     }
   };
 
@@ -132,11 +198,6 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     $scope.show = {};
     angular.copy(defaultShow, $scope.show);
   }
-
-  $scope.anim = {
-    info: false,
-    wikipedia: false
-  };
 
   // TODO Handle ' like in Grey's anatomy
   $scope.titleEntered = function () {
@@ -169,8 +230,9 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
       httpRequests.wikipedia = null;
     }
 
-    $scope.anim.info = false;
-    $scope.anim.wikipedia = false;
+    $scope.fetching.setError('tmdb');
+    $scope.fetching.setError('tvdb');
+    $scope.fetching.setError('tvrage');
   };
 
   function startRequests() {
@@ -184,15 +246,13 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   }
 
   function queryTmdbForIds() {
-    $scope.fetching.tmdb.text = '';
-    $scope.fetching.tmdb.icon = 'glyphicon-refresh';
+    $scope.fetching.setFetching('tmdb');
 
     var idsUri = 'https://api.themoviedb.org/3/tv/' + $scope.show.ids.tmdbId + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
 
     $http.jsonp(idsUri, {timeout: httpRequests.info.getIds.promise}).success(function (ids) {
       if (_.isEmpty(ids) === false) {
-        $scope.fetching.tmdb.text = 'text-success';
-        $scope.fetching.tmdb.icon = 'glyphicon-ok';
+        $scope.fetching.setSuccess('tmdb');
 
         /*jshint camelcase: false*/
         $scope.show.ids.imdbId = ids.imdb_id;
@@ -205,25 +265,21 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
           queryTvRage();
         }
       } else {
-        $scope.fetching.tmdb.text = 'text-error';
-        $scope.fetching.tmdb.icon = 'glyphicon-remove';
+        $scope.fetching.setError('tmdb');
       }
     }).error(function () {
-      $scope.fetching.tmdb.text = 'text-error';
-      $scope.fetching.tmdb.icon = 'glyphicon-remove';
+      $scope.fetching.setError('tmdb');
     });
   }
 
   function queryTvdb() {
     var tvdbUrl = 'http://0.0.0.0:3000/shows/fetch/tvdb/';
 
-    $scope.fetching.tvdb.text = '';
-    $scope.fetching.tvdb.icon = 'glyphicon-refresh';
+    $scope.fetching.setFetching('tvdb');
 
     $http.post(tvdbUrl, $scope.show, {timeout: httpRequests.info.fetchTvdb.promise}).success(function (data) {
       if (_.isEmpty(data) === false) {
-        $scope.fetching.tvdb.text = 'text-success';
-        $scope.fetching.tvdb.icon = 'glyphicon-ok';
+        $scope.fetching.setSuccess('tvdb');
 
         $scope.show.synopsis = data.Overview;
 
@@ -234,25 +290,21 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
           }
         }
       } else {
-        $scope.fetching.tvdb.text = 'text-error';
-        $scope.fetching.tvdb.icon = 'glyphicon-remove';
+        $scope.fetching.setError('tvdb');
       }
     }).error(function () {
-      $scope.fetching.tvdb.text = 'text-error';
-      $scope.fetching.tvdb.icon = 'glyphicon-remove';
+      $scope.fetching.setError('tvdb');
     });
   }
 
   function queryTvRage() {
-    $scope.fetching.tvrage.text = '';
-    $scope.fetching.tvrage.icon = 'glyphicon-refresh';
+    $scope.fetching.setFetching('tvrage');
 
     var tvRageUrl = 'http://0.0.0.0:3000/shows/fetch/tvrage/';
 
     $http.post(tvRageUrl, $scope.show, {timeout: httpRequests.info.fetchTvRage.promise}).success(function (data) {
       if (_.isEmpty(data) === false) {
-        $scope.fetching.tvrage.text = 'text-success';
-        $scope.fetching.tvrage.icon = 'glyphicon-ok';
+        $scope.fetching.setSuccess('tvrage');
 
         if (data.id) {
           $scope.show.ids.tvrageId = data.id;
@@ -271,12 +323,10 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
           $scope.show.latestEpisode = {'title': data['Latest Episode'][1], date: data['Latest Episode'][2]};
         }
       } else {
-        $scope.fetching.tvrage.text = 'text-error';
-        $scope.fetching.tvrage.icon = 'glyphicon-remove';
+        $scope.fetching.setError('tvrage');
       }
     }).error(function () {
-      $scope.fetching.tvrage.text = 'text-error';
-      $scope.fetching.tvrage.icon = 'glyphicon-remove';
+      $scope.fetching.setError('tvrage');
     });
   }
 
@@ -316,19 +366,14 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     $scope.fetchWikipedia();
 
-    $scope.anim.info = true;
-
     if ($scope.show.title.length > 0) {
       queryTmdb();
-    } else {
-      $scope.anim.info = false;
     }
   };
 
   // TODO: use alternate name
   $scope.fetchWikipedia = function () {
     if ($scope.show.title.length > 0) {
-      $scope.anim.wikipedia = true;
 
       var encodedTitle = $scope.show.title.replace(/ /g, '_');
       var jsonUrl = 'https://en.wikipedia.org/w/api.php?format=json&action=query&callback=JSON_CALLBACK&titles=List_of_' + encodedTitle + '_episodes';
@@ -342,9 +387,6 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         } catch (err) {
           $scope.show.wikipedia = 'https://en.wikipedia.org/wiki/List_of_' + encodedTitle + '_episodes';
         }
-        $scope.anim.wikipedia = false;
-      }).error(function () {
-        $scope.anim.wikipedia = false;
       });
     }
   };
