@@ -246,8 +246,6 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   }
 
   function queryTmdbForIds() {
-    $scope.fetching.setFetching('tmdb');
-
     var idsUri = 'https://api.themoviedb.org/3/tv/' + $scope.show.ids.tmdbId + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
 
     $http.jsonp(idsUri, {timeout: httpRequests.info.getIds.promise}).success(function (ids) {
@@ -331,6 +329,8 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   }
 
   function queryTmdb() {
+    $scope.fetching.setFetching('tmdb');
+
     var searchUri = 'https://api.themoviedb.org/3/search/tv?query=' + $scope.show.title + '&api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
 
     // handle search fail
@@ -349,13 +349,11 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
         queryTmdbForIds();
       } else {
-        $scope.fetching.tmdb.text = 'text-error';
-        $scope.fetching.tmdb.icon = 'glyphicon-remove';
+        $scope.fetching.setError('tmdb');
       }
       /*jshint camelcase: true*/
     }).error(function () {
-      $scope.fetching.tmdb.text = 'text-error';
-      $scope.fetching.tmdb.icon = 'glyphicon-remove';
+      $scope.fetching.setError('tmdb');
     });
   }
 
