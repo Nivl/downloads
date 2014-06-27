@@ -273,6 +273,10 @@ b, strong {
 }
 
 
+.form-group {
+  margin-bottom: 30px;
+}
+
 .modal-header {
   background-color: #428bca;
   color: white !important;
@@ -284,4 +288,42 @@ h1 {
 
 h2 {
   font-size: 27px;
+}
+
+input[type=text] {
+  border: none;
+  box-shadow: none;
+  border-bottom: 1px solid #bebcbc;
+  border-radius: 0;
+
+  &:focus {
+    box-shadow: none;
+    border-color: inherit;
+  }
+}
+
+.modal {
+  label,
+  .input-border {
+    z-index: 1410;
+  }
+}
+
+label {
+  position: absolute;
+  transform: none;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0.03, 1);
+  color: #bebcbc;
+
+  &.move {
+    transform: scale(0.7) translateX(-13%) translateY(-27px);
+    color: #428bca;
+  }
+
+}
+
+.input-border {
+  background: #428bca;
+  position: absolute;
+  transition: all 0.2s linear;
 }
