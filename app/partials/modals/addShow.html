@@ -33,23 +33,6 @@
       </div>
     </div>
 
-
-    <div class="form-group">
-      <label for="wikipedia" class="">Wikipedia</label>
-
-      <div class="col-sm-8">
-        <div class="input-group">
-          <input type="text" class="form-control" id="wikipedia" ng-model="show.wikipedia">
-
-          <span class="input-group-btn">
-            <button type="button" ng-click="fetchWikipedia()" class="btn btn-default">
-              <i ng-class="{spin: anim.wikipedia}" class="glyphicon glyphicon-refresh"></i>
-            </button>
-          </span>
-        </div>
-      </div>
-    </div>
-
     <h2>Preview</h2>
     <div class="preview-show clearfix" ng-show="show.poster">
       <img class="poster" ng-src="https://image.tmdb.org/t/p/w185/{{show.poster}}" />
