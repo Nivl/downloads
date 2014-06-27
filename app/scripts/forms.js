@@ -1,17 +1,20 @@
 'use strict';
 
 // TODO put in an global object + wrap in a anonymous function not to spam the global space
-// TODO Handle edition (add the move if the field is not empty)
 function parseLabel(element) {
   var $el = $(element);
-  var $form = $('#' + $el.attr('for'));
+  var $field = $('#' + $el.attr('for'));
 
-  var parentMargin = parseInt($form.parent().css('margin-left'), 10);
-  var parentPadding = parseInt($form.parent().css('padding-left'), 10);
-  var formPadding = parseInt($form.css('padding-left'), 10);
+  var parentMargin = parseInt($field.parent().css('margin-left'), 10);
+  var parentPadding = parseInt($field.parent().css('padding-left'), 10);
+  var formPadding = parseInt($field.css('padding-left'), 10);
 
   var newLeft = parentMargin +  parentPadding + formPadding;
   $el.css('left', newLeft);
+
+  if ($field.val().length > 0) {
+    $el.addClass('move');
+  }
 }
 
 $(document).on('click', 'input[type=text]', function (e) {
