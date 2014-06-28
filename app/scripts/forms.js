@@ -1,7 +1,6 @@
 'use strict';
 
-// TODO put in an global object + wrap in a anonymous function not to spam the global space
-function parseLabel(element) {
+App.funcs.parseLabel = function (element) {
   var $el = $(element);
   var $field = $('#' + $el.attr('for'));
 
@@ -15,7 +14,7 @@ function parseLabel(element) {
   if ($field.val().length > 0) {
     $el.addClass('move');
   }
-}
+};
 
 $(document).on('click', 'input[type=text]', function (e) {
   var $this = $(this);

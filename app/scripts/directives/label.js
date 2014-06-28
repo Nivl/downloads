@@ -5,7 +5,7 @@ angular.module('app-directives').directive('label', ['$timeout', function ($time
     restrict: 'E',
     link: function ($scope, el, attrs, controller) {
       $timeout(function () {
-        parseLabel(el);
+        App.funcs.parseLabel(el);
       }, 0, false);
     }
   };

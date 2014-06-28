@@ -26,6 +26,7 @@
   "white": true,
 
   "globals": {
+    "App": true,
     "_": true,
     "$": true,
     "moment": true,
