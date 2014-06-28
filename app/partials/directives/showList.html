@@ -2,7 +2,7 @@
 <div>
   <div class="panel-heading" ng-class="{cancelled: show.isCancelled, completed: show.isCompleted}">
     <h4 class="panel-title">
-      <a data-toggle="collapse" class="main-link" ng-href="#show-{{show._id}}">
+      <a data-toggle="collapse" class="main-link" ng-href="#show-{{show._id}}-{{$parent.$index}}">
         {{show.title}}
       </a>
 
@@ -12,7 +12,7 @@
     </h4>
   </div>
 
-  <div id="show-{{show._id}}" class="panel-collapse collapse">
+  <div id="show-{{show._id}}-{{$parent.$index}}" class="panel-collapse collapse">
     <div class="panel-body">
       <div class="preview-show clearfix">
         <img class="poster" ng-src="https://image.tmdb.org/t/p/w185/{{show.poster}}" />
