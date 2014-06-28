@@ -14,14 +14,19 @@
 
   <div id="show-{{show._id}}-{{$parent.$index}}" class="panel-collapse collapse">
     <div class="panel-body">
-      <div class="preview-show clearfix">
+      <div class="show clearfix">
         <img class="poster" ng-src="https://image.tmdb.org/t/p/w185/{{show.poster}}" />
 
-        {{show.synopsis}}
+        <div class="synopsis">
+          {{show.synopsis}}
+        </div>
 
-        <ul>
-          <li ng-show="show.latestEpisode.date">The last episode was on {{show.latestEpisode.date | date:'longDate'}}</li>
-          <li ng-show="show.nextEpisode.date">The next episode is on {{show.nextEpisode.date | date:'longDate'}}</li>
+        <ul class="episodes">
+          <li ng-show="show.nextEpisode.date"><strong>Next episode</strong>: {{show.nextEpisode.date | date:'longDate'}}</li>
+          <li ng-hide="show.nextEpisode.date"><strong>Next episode</strong>: Unknown</li>
+
+          <li ng-show="show.latestEpisode.date"><strong>Last episode</strong>: {{show.latestEpisode.date | date:'longDate'}}</li>
+          <li ng-hide="show.latestEpisode.date"><strong>Last episode</strong>: Unknown</li>
         </ul>
 
         <ul class="list-unstyled list-inline control-links pull-right">

@@ -53,7 +53,7 @@
     </div>
 
     <h2>Preview</h2>
-    <div class="preview-show clearfix" ng-show="show.poster">
+    <div class="show preview clearfix" ng-show="show.poster">
       <img class="poster" ng-src="https://image.tmdb.org/t/p/w185/{{show.poster}}" />
 
       <div class="synopsis">
@@ -61,7 +61,7 @@
         <p>{{show.synopsis}}</p>
       </div>
 
-      <div class="episode">
+      <div class="episodes">
         <div ng-show="show.latestEpisode">
           <strong>Latest Episode:</strong> {{show.latestEpisode.title }} on {{show.latestEpisode.date }}
         </div>
