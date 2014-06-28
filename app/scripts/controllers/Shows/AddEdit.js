@@ -163,9 +163,18 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     httpRequests.list.push($q.defer());
     $http.jsonp(searchUri, {timeout: _.last(httpRequests.list).promise}).success(function (data) {
+      console.log(data);
       /*jshint camelcase: false*/
       if (data.total_results > 0) {
-        var result = data.results[0];
+        var result = null;
+        var len = data.results.length;
+        for (var i = 0; i < len; i += 1) {
+          result = data.results[i];
+
+          if (result.poster_path !== null) {
+            break;
+          }
+        }
 
         $scope.show.ids.tmdbId = result.id;
         $scope.show.poster = result.poster_path;
@@ -193,6 +202,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     httpRequests.list.push($q.defer());
     $http.jsonp(idsUri, {timeout: _.last(httpRequests.list).promise}).success(function (ids) {
+      console.log(ids);
       if (_.isEmpty(ids) === false) {
         $scope.fetching.setSuccess('tmdb');
 
@@ -225,6 +235,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     httpRequests.list.push($q.defer());
     $http.post(tvdbUrl, $scope.show, {timeout: _.last(httpRequests.list).promise}).success(function (data) {
+      console.log(data);
       if (_.isEmpty(data) === false) {
         $scope.fetching.setSuccess('tvdb');
 
