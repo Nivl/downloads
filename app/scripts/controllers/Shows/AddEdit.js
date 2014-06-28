@@ -82,7 +82,6 @@ var httpRequests = {
   },
 
   cancelAll: function () {
-    console.log('cancelling');
     httpRequests.hasBeenCancelled = true;
     var len = httpRequests.list.length;
 
@@ -231,7 +230,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
         $scope.show.synopsis = data.Overview;
 
-        if ($scope.show.ids.tvrageId === null) {
+        if ($scope.show.ids.tvrageId === 0) {
           if ($scope.show.title !== data.Overview) {
             $scope.show.alternateTitle = data.SeriesName;
             queryTvRage();
