@@ -19,6 +19,11 @@
 
         {{show.synopsis}}
 
+        <ul>
+          <li ng-show="show.latestEpisode.date">The last episode was on {{show.latestEpisode.date | date:'longDate'}}</li>
+          <li ng-show="show.nextEpisode.date">The next episode is on {{show.nextEpisode.date | date:'longDate'}}</li>
+        </ul>
+
         <ul class="list-unstyled list-inline control-links pull-right">
           <li><a class="text-warning" ng-click="showCtrl.addOrEdit(show)">Edit</a></li>
           <li><a class="text-danger" ng-click="showCtrl.remove(show)">Delete</a></li>
