@@ -2,7 +2,6 @@
 
 var tz = moment().tz('America/Los_Angeles');
 var v = App.Shows.v;
-var f = App.Shows.f;
 
 angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal', 'Show',  function ($http, $filter, $modal, Show) {
   var that = this;
@@ -51,31 +50,5 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
         show: function () { return show; }
       }
     });
-  };
-
-  this.dropped = function (dragEl, dropEl) {
-    var dragId = angular.element(dragEl).attr('id');
-
-    var newDay = parseInt(angular.element(dropEl).attr('id'), 10);
-    var currentDay = dragId.substr(-1) - 1;
-    var showId = dragId.substr(0, dragId.length - 2);
-
-    var showIndex = f.findShow(showId, currentDay);
-
-    if (showIndex !== false) {
-      var show = that.days[currentDay].shows[showIndex];
-      show.day = newDay + 1;
-
-      f.swapShow(showId, currentDay, newDay);
-
-      show.$update({}, function (response) { return response; }, function (response) {
-        // on error, we revert
-        show.day = currentDay;
-
-        f.swapShow(showId, newDay, currentDay);
-
-        return response;
-      });
-    }
   };
 }]);

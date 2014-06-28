@@ -47,9 +47,9 @@
                           {{day.name}}
                         </h2>
 
-                      <div class="panel-group" nv-class="drop-area" id="{{$index}}" nv-drop-target='true' nv-drop='showCtrl.dropped(dragEl, dropEl)'>
+                      <div class="panel-group">
 
-                        <div class="panel panel-default" id="{{show._id}}-{{show.day}}" nv-draggable="true" ng-repeat="show in day.shows">
+                        <div class="panel panel-default" ng-repeat="show in day.shows">
                           <show-list></show-list>
                         </div>
                       </div>
