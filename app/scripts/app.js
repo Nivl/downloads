@@ -1,7 +1,11 @@
 'use strict';
 
 window.App = {
-  funcs: {}
+  funcs: {},
+  Shows: {
+    v: {},
+    f: {}
+  }
 };
 
 angular.module('app', ['app-controllers', 'app-directives', 'app-filters', 'ui.bootstrap'])
