@@ -49,7 +49,7 @@
 
                       <div class="panel-group">
 
-                        <div class="panel panel-default" ng-repeat="show in day.shows">
+                        <div class="panel panel-default" ng-repeat="show in day.shows | orderBy:'isPaused':false">
                           <show-list></show-list>
                         </div>
                       </div>
