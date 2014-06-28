@@ -3,7 +3,7 @@
 var v = App.Shows.v;
 var f = App.Shows.f;
 
-angular.module('app-controllers').controller('RemoveShowController', ['$scope', '$modalInstance', '$http', 'show', function RemoveShowController($scope, $modalInstance, $http, show) {
+angular.module('app-controllers').controller('RemoveShowController', ['$scope', '$modalInstance', '$http', 'show', function ($scope, $modalInstance, $http, show) {
   $scope.show = show;
 
   $scope.cancel = function () {
