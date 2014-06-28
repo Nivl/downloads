@@ -230,7 +230,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
         $scope.show.synopsis = data.Overview;
 
-        if ($scope.show.ids.tvrageId === 0) {
+        if (!$scope.show.ids.tvrageId) {
           if ($scope.show.title !== data.Overview) {
             $scope.show.alternateTitle = data.SeriesName;
             queryTvRage();
