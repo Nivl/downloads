@@ -197,6 +197,12 @@ body > header {
 .fetching-info {
   font-size: 13px;
 
+  li {
+    width: -moz-fit-content;
+    width: -webkit-fit-content;
+    width: fit-content;
+  }
+
   i {
     font-size: 10px;
     margin-left: 3px;
@@ -357,4 +363,38 @@ label {
   background: #428bca;
   position: absolute;
   transition: all 0.2s linear;
+}
+
+.tooltip-inner {
+  background-color: #428bca;
+}
+
+.tooltip {
+  &.top .tooltip-arrow {
+    border-top-color: #428bca;
+  }
+
+  &.top-left .tooltip-arrow {
+    border-top-color: #428bca;
+  }
+
+  &.top-right .tooltip-arrow {
+    border-top-color: #428bca;
+  }
+
+  &.right .tooltip-arrow {
+    border-right-color: #428bca;
+  }
+
+  &.bottom .tooltip-arrow {
+    border-bottom-color: #428bca;
+  }
+
+  &.bottom-left .tooltip-arrow {
+    border-bottom-color: #428bca;
+  }
+
+  &.bottom-right .tooltip-arrow {
+    border-bottom-color: #428bca;
+  }
 }
