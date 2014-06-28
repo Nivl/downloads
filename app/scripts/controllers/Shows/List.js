@@ -10,6 +10,10 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
   this.yesterdaysShows = function () {
     var yesterday = tz.isoWeekday() - 2; // -1 for yesterday, -1 for the index
 
+    if (yesterday === -1) {
+      yesterday = 6;
+    }
+
     if (yesterday < 0 || yesterday > 6) {
       return [];
     } else {
@@ -21,9 +25,33 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
     var length = shows.length;
 
     for (var i = 0; i < length; i += 1) {
+      var tz = moment().tz('America/Los_Angeles');
+
       if (shows[i] instanceof Show) {
         var show = shows[i];
+        show.isPaused = true;
 
+        if (show.nextEpisode && show.nextEpisode.date && /^\d+$/.test(show.nextEpisode.date)) {
+          try {
+            var next = moment(parseInt(show.nextEpisode.date, 10));
+            var yesterday = (tz.isoWeekday() - 1 < 1) ? (7) : (tz.isoWeekday() - 1);
+
+            if (shows.day === yesterday) {
+              if (next.isSame(tz.subtract('days', 1).valueOf(), 'day')) {
+                show.isPaused = false;
+              }
+            } else {
+              var today = tz.isoWeekday();
+              var delta = (show.day >= today) ? (show.day - today) : ((7 - today) + show.day);
+
+              if (next.isSame(tz.add('days', delta).valueOf(), 'day')) {
+                show.isPaused = false;
+              }
+            }
+          } catch (e) {
+            console.log(e);
+          }
+        }
         that.days[show.day - 1].shows.push(show);
       }
     }

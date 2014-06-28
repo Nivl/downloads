@@ -104,6 +104,7 @@ var httpRequests = {
 };
 
 
+// TODO auto set cancelled and completed
 // todo reset the fetching object when we refetch the data
 // todo put on error the non fetched data when the user cancel a request
 angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', '$q', 'Show', 'data', 'type',  function ($scope, $modalInstance, $filter, $http, $q, Show, data, type) {

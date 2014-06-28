@@ -1,6 +1,6 @@
 
 <div>
-  <div class="panel-heading" ng-class="{cancelled: show.isCancelled, completed: show.isCompleted}">
+  <div class="panel-heading" ng-class="{cancelled: show.isCancelled, completed: show.isCompleted, paused: show.isPaused}">
     <h4 class="panel-title">
       <a data-toggle="collapse" class="main-link" ng-href="#show-{{show._id}}-{{$parent.$index}}">
         {{show.title}}
