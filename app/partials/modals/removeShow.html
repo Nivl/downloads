@@ -1,47 +1,18 @@
 <div class="modal-header">
-  <h3 class="modal-title">Remove a show</h3>
+  <h3 class="modal-title">Delete a show</h3>
 </div>
 
 <form name="removeShowForm" class="form-horizontal" role="form" ng-submit="removeShowForm.$valid && removeShow()" novalidate>
   <div class="modal-body">
 
-
-    <div class="form-group">
-      <div class="col-sm-offset-4 col-sm-8">
-        <div class="radio">
-          <label>
-            <input type="radio" name="status" ng-model="formData.status" value="airing">
-            Mark currently airing
-          </label>
-        </div>
-
-        <div class="radio">
-          <label>
-            <input type="radio" name="status" ng-model="formData.status" value="completed">
-            Mark as completed
-          </label>
-        </div>
-
-        <div class="radio">
-          <label>
-            <input type="radio" name="status" ng-model="formData.status" value="cancelled">
-            Mark as cancelled
-          </label>
-        </div>
-
-        <div class="radio">
-          <label>
-            <input type="radio" name="status" ng-model="formData.status" value="remove">
-            Remove
-          </label>
-        </div>
-
-      </div>
+    <div class="text-center">
+      Are you sure you want to delete the show "{{show.title}}"?
     </div>
+
   </div>
 
   <div class="modal-footer">
-    <button type="submit" class="btn btn-primary">Apply</button>
-    <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    <button type="submit" class="btn btn-danger">Yes, I'm sure!</button>
+    <button type="button" class="btn btn-success" ng-click="cancel()">No</button>
   </div>
 </form>
