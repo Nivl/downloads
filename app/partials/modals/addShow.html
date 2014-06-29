@@ -61,14 +61,16 @@
         <p>{{show.synopsis}}</p>
       </div>
 
-      <div class="episodes">
-        <div ng-show="show.latestEpisode">
-          <strong>Latest Episode:</strong> {{show.latestEpisode.title }} on {{show.latestEpisode.date }}
-        </div>
-        <div ng-show="show.nextEpisode">
-          <strong>Next Episode:</strong> {{show.nextEpisode.title }} on {{show.nextEpisode.date }}
-        </div>
-      </div>
+      <ul class="episodes">
+        <li ng-show="show.nextEpisode.date"><strong>Next episode</strong>: {{show.nextEpisode.date | date:'longDate'}}</li>
+        <li ng-hide="show.nextEpisode.date || show.isCancelled || show.isCompleted"><strong>Next episode</strong>: Unknown</li>
+        <li ng-show="show.isCancelled">This show has been cancelled</li>
+        <li ng-show="show.isCompleted">This show has ended</li>
+
+        <li ng-show="show.latestEpisode.date"><strong>Last episode</strong>: {{show.latestEpisode.date | date:'longDate'}}</li>
+        <li ng-hide="show.latestEpisode.date || show.isCancelled || show.isCompleted"><strong>Last episode</strong>: Unknown</li>
+
+      </ul>
     </div>
   </div>
 
