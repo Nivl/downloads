@@ -29,9 +29,9 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
 
       if (shows[i] instanceof Show) {
         var show = shows[i];
-        show.isPaused = true;
+        show.isPaused = show.isCancelled === false && show.isCompleted === false;
 
-        if (show.nextEpisode && show.nextEpisode.date && /^\d+$/.test(show.nextEpisode.date)) {
+        if (show.isPaused && show.nextEpisode && show.nextEpisode.date && /^\d+$/.test(show.nextEpisode.date)) {
           try {
             var next = moment(parseInt(show.nextEpisode.date, 10));
             var yesterday = (tz.isoWeekday() - 1 < 1) ? (7) : (tz.isoWeekday() - 1);

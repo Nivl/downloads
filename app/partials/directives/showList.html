@@ -23,10 +23,10 @@
 
         <ul class="episodes">
           <li ng-show="show.nextEpisode.date"><strong>Next episode</strong>: {{show.nextEpisode.date | date:'longDate'}}</li>
-          <li ng-hide="show.nextEpisode.date"><strong>Next episode</strong>: Unknown</li>
+          <li ng-hide="show.nextEpisode.date || show.isCancelled || show.isCompleted"><strong>Next episode</strong>: Unknown</li>
 
           <li ng-show="show.latestEpisode.date"><strong>Last episode</strong>: {{show.latestEpisode.date | date:'longDate'}}</li>
-          <li ng-hide="show.latestEpisode.date"><strong>Last episode</strong>: Unknown</li>
+          <li ng-hide="show.latestEpisode.date || show.isCancelled || show.isCompleted"><strong>Last episode</strong>: Unknown</li>
         </ul>
 
         <ul class="list-unstyled list-inline control-links pull-right">

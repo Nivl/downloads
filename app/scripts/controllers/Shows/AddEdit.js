@@ -164,7 +164,6 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     httpRequests.list.push($q.defer());
     $http.jsonp(searchUri, {timeout: _.last(httpRequests.list).promise}).success(function (data) {
-      console.log(data);
       /*jshint camelcase: false*/
       if (data.total_results > 0) {
         var result = null;
@@ -203,7 +202,6 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     httpRequests.list.push($q.defer());
     $http.jsonp(idsUri, {timeout: _.last(httpRequests.list).promise}).success(function (ids) {
-      console.log(ids);
       if (_.isEmpty(ids) === false) {
         $scope.fetching.setSuccess('tmdb');
 
@@ -236,7 +234,6 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     httpRequests.list.push($q.defer());
     $http.post(tvdbUrl, $scope.show, {timeout: _.last(httpRequests.list).promise}).success(function (data) {
-      console.log(data);
       if (_.isEmpty(data) === false) {
         $scope.fetching.setSuccess('tvdb');
 
@@ -268,10 +265,20 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     httpRequests.list.push($q.defer());
     $http.post(tvRageUrl, $scope.show, {timeout: _.last(httpRequests.list).promise}).success(function (data) {
       if (_.isEmpty(data) === false) {
+        // TODO Set isPaused
+
         $scope.fetching.setSuccess('tvrage');
 
         if (data.id) {
           $scope.show.ids.tvrageId = data.id;
+        }
+
+        if (data.Status) {
+          if (data.Status === 'Ended') {
+            $scope.show.isCompleted = true;
+          } else if (data.Status === 'Canceled') {
+            $scope.show.isCancelled = true;
+          }
         }
 
         if (data.Airtime) {
@@ -286,6 +293,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         if (data['Latest Episode'] && data['Latest Episode'][2]) {
           $scope.show.latestEpisode = {'title': data['Latest Episode'][1], date: data['Latest Episode'][2]};
         }
+
       } else {
         $scope.fetching.setError('tvrage');
       }
