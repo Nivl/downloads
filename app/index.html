@@ -24,7 +24,7 @@
 
               <div class="panel-group">
 
-                <div class="panel panel-default" ng-repeat="show in showCtrl.yesterdaysShows()">
+                <div class="panel panel-default" ng-repeat="show in showCtrl.yesterdaysShows()" ng-class="{cancelled: show.isCancelled, completed: show.isCompleted, paused: show.isPaused}">
                   <show-list></show-list>
                 </div>
               </div>
@@ -49,7 +49,7 @@
 
                       <div class="panel-group">
 
-                        <div class="panel panel-default" ng-repeat="show in day.shows | orderBy:'isPaused':false">
+                        <div class="panel panel-default" ng-repeat="show in day.shows | orderBy:'isPaused':false" ng-class="{cancelled: show.isCancelled, completed: show.isCompleted, paused: show.isPaused}">
                           <show-list></show-list>
                         </div>
                       </div>

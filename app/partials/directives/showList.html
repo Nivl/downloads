@@ -1,12 +1,12 @@
 
 <div>
-  <div class="panel-heading" ng-class="{cancelled: show.isCancelled, completed: show.isCompleted, paused: show.isPaused}">
+  <div class="panel-heading">
     <h4 class="panel-title">
       <a data-toggle="collapse" class="main-link" ng-href="#show-{{show._id}}-{{$parent.$index}}">
         {{show.title}}
       </a>
 
-      <a ng-show="show.downloadLink" ng-href="{{show.downloadLink}}">
+      <a class="download-link" ng-show="show.downloadLink" ng-href="{{show.downloadLink}}">
         <i class="glyphicon glyphicon-cloud-download"></i>
       </a>
     </h4>
