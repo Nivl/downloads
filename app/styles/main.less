@@ -55,7 +55,6 @@ h2, h4 {
 
 body > header {
   background:       linear-gradient(@dark-blue, #5e7a9b);
-  color:            white;
   padding:          70px 0;
   text-shadow:      0 1px 2px rgba(0, 0, 0, 0.2);
   margin-bottom:    50px;
@@ -68,21 +67,23 @@ body > header {
     border: none !important;
 
     .panel-default {
-      background-color: white;
+      background-color: #334A5F;
+      border-color: #323E49;
       text-shadow: none;
 
       &.cancelled {
         background-color: #eea6a6 !important;
-        border-bottom-color: #99646C !important;
+        border-color: #99646C !important;
       }
 
       &.completed {
         background-color: #AFD6AE !important;
-        border-bottom-color: #9FB38F !important;
+        border-color: #9FB38F !important;
       }
 
       &.paused {
-        background-color: #334A5F !important;
+        background-color: #465D79!important;
+        border-color: #5B6E86!important;
 
         a {
           color: #547797;
