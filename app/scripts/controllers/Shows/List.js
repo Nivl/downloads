@@ -31,25 +31,33 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
         var show = shows[i];
         show.isPaused = show.isCancelled === false && show.isCompleted === false;
 
-        if (show.isPaused && show.nextEpisode && show.nextEpisode.date && /^\d+$/.test(show.nextEpisode.date)) {
+        if (show.isPaused) {
           try {
-            var next = moment(parseInt(show.nextEpisode.date, 10));
             var yesterday = (tz.isoWeekday() - 1 < 1) ? (7) : (tz.isoWeekday() - 1);
 
-            if (shows.day === yesterday) {
-              if (next.isSame(tz.subtract('days', 1).valueOf(), 'day')) {
-                show.isPaused = false;
+            if (show.day === yesterday) {
+              if (show.latestEpisode && show.latestEpisode.date && /^\d+$/.test(show.latestEpisode.date)) {
+                var last = moment(parseInt(show.latestEpisode.date, 10));
+
+                if (last.isSame(tz.subtract('days', 1).valueOf(), 'day')) {
+                  show.isPaused = false;
+                  show.isCancelled = false;
+                  show.isCompleted = false;
+                }
               }
             } else {
-              var today = tz.isoWeekday();
-              var delta = (show.day >= today) ? (show.day - today) : ((7 - today) + show.day);
+              if (show.nextEpisode && show.nextEpisode.date && /^\d+$/.test(show.nextEpisode.date)) {
+                var next = moment(parseInt(show.nextEpisode.date, 10));
+                var today = tz.isoWeekday();
+                var delta = (show.day >= today) ? (show.day - today) : ((7 - today) + show.day);
 
-              if (next.isSame(tz.add('days', delta).valueOf(), 'day')) {
-                show.isPaused = false;
+                if (next.isSame(tz.add('days', delta).valueOf(), 'day')) {
+                  show.isPaused = false;
+                }
               }
             }
           } catch (e) {
-            console.log(e);
+            console.log(show.title + ': ' + e);
           }
         }
         that.days[show.day - 1].shows.push(show);

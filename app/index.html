@@ -24,7 +24,7 @@
 
               <div class="panel-group">
 
-                <div class="panel panel-default" ng-repeat="show in showCtrl.yesterdaysShows()" ng-class="{cancelled: show.isCancelled, completed: show.isCompleted, paused: show.isPaused}">
+                <div class="panel panel-default" ng-repeat="show in showCtrl.yesterdaysShows() | orderBy:'isPaused':false" ng-class="{cancelled: show.isCancelled, completed: show.isCompleted, paused: show.isPaused}">
                   <show-list></show-list>
                 </div>
               </div>
