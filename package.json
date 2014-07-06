@@ -35,7 +35,7 @@
   "engines": {
     "node": ">=0.10"
   },
-  "postinstall": "bower install",
+  "postinstall": "./node_modules/bower/bin/bower install",
   "dependencies": {
     "compression": "^1.0.8",
     "express": "^4.5.0",
