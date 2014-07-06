@@ -209,6 +209,23 @@ module.exports = function (grunt) {
       }
     },
 
+    replace: {
+      dist: {
+        options: {
+          patterns: [
+            {
+              match: /0\.0\.0\.0:3000/g,
+              replacement: grunt.option('api-url') || 'downloads.api.melvin.re'
+            }
+          ]
+        },
+
+        files: [
+          {expand: true, flatten: true, src: ['<%= project.dist %>/scripts/*.js'], dest: '<%= project.dist %>/scripts/'}
+        ]
+      }
+    },
+
     // Put files not handled in other tasks here
     copy: {
       dist: {
@@ -279,6 +296,7 @@ module.exports = function (grunt) {
     'uglify',
     'rev',
     'usemin',
+    'replace',
     'htmlmin'
   ]);
 
