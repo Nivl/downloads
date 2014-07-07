@@ -3,6 +3,7 @@
 var v = App.Shows.v;
 var f = App.Shows.f;
 
+// Reset on Cancel or submit
 var fetchingStatus = {
   tmdb : 1,
   tvdb : 1,
@@ -104,15 +105,19 @@ var httpRequests = {
 };
 
 
-// TODO auto set cancelled and completed
 // todo reset the fetching object when we refetch the data
-// todo put on error the non fetched data when the user cancel a request
 angular.module('app-controllers').controller('AddShowController', ['$scope', '$modalInstance', '$filter', '$http', '$q', 'Show', 'data', 'type',  function ($scope, $modalInstance, $filter, $http, $q, Show, data, type) {
   var show = null;
   var initialDay = 0;
 
   $scope.fetching = fetchingStatus;
   $scope.cancelRequests = httpRequests.cancelAll;
+
+  $modalInstance.result.then(function () {
+    httpRequests.reset();
+  }, function () {
+    httpRequests.reset();
+  });
 
   if (type === 'edit') {
     show = data;
@@ -123,6 +128,8 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
   }
 
   $scope.addShow = function () {
+    httpRequests.reset();
+
     if (type === 'edit') {
       show.$update({}, function (show) {
         if (show.day !== initialDay) {
