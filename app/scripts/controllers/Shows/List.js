@@ -2,25 +2,34 @@
 
 var tz = moment().tz('America/Los_Angeles');
 var v = App.Shows.v;
+var f = App.Shows.f;
 
-angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal', 'Show',  function ($http, $filter, $modal, Show) {
-  var that = this;
-  this.days = v.showsByDay;
+function listenSocket(socket, status) {
+  socket.on('addShow', function (show) {
+    // todo show should be a Show - Same for AddEdit.addShow()
+    v.showsByDay[show.day - 1].shows.push(show);
+  });
 
-  this.yesterdaysShows = function () {
-    var yesterday = tz.isoWeekday() - 2; // -1 for yesterday, -1 for the index
+  socket.on('removeShow', function (data) {
+    var id = data.id;
+    var day = data.day;
+    var showIndex = f.findShow(id, day - 1);
 
-    if (yesterday === -1) {
-      yesterday = 6;
+    if (showIndex !== false) {
+      v.showsByDay[day - 1].shows.splice(showIndex, 1);
     }
+  });
 
-    if (yesterday < 0 || yesterday > 6) {
-      return [];
-    } else {
-      return that.days[yesterday].shows;
+  socket.on('maintenance', function (bool) {
+    status.maintenance = bool;
+
+    if (bool === false) {
+      // todo reloadShows
     }
-  };
+  });
+}
 
+function reloadShows(Show) {
   Show.query(function (shows) {
     var length = shows.length;
 
@@ -60,10 +69,34 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
             console.log(show.title + ': ' + e);
           }
         }
-        that.days[show.day - 1].shows.push(show);
+        v.showsByDay[show.day - 1].shows.push(show);
       }
     }
   });
+}
+
+angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal', 'Show', 'socket',  function ($http, $filter, $modal, Show, socket) {
+  this.days = v.showsByDay;
+  this.status = {
+    maintenance: false
+  };
+
+  listenSocket(socket, this.status);
+  reloadShows(Show);
+
+  this.yesterdaysShows = function () {
+    var yesterday = tz.isoWeekday() - 2; // -1 for yesterday, -1 for the index
+
+    if (yesterday === -1) {
+      yesterday = 6;
+    }
+
+    if (yesterday < 0 || yesterday > 6) {
+      return [];
+    } else {
+      return v.showsByDay[yesterday].shows;
+    }
+  };
 
   // Takes the day number, or the show to edit
   this.addOrEdit = function (data) {

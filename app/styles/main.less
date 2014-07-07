@@ -53,6 +53,31 @@ h2, h4 {
   }
 }
 
+#maintenance {
+  position: fixed;
+  top: -35px;
+  left: 42%;
+  z-index: 9999;
+  padding: 5px 10px;
+  background-color: rgb(77, 73, 73);
+  color: white;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border: 1px solid rgb(117, 117, 117);
+  border-top: none;
+  font-size: 15px;
+  transition: top, 0.2s;
+
+  i {
+    margin-left: 5px;
+    font-size: 12px;
+  }
+
+  &.active {
+    top: 0px
+  }
+}
+
 body > header {
   background:       linear-gradient(@dark-blue, #5e7a9b);
   padding:          70px 0;

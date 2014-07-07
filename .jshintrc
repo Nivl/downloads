@@ -26,6 +26,7 @@
   "white": true,
 
   "globals": {
+    "io": true,
     "App": true,
     "_": true,
     "$": true,

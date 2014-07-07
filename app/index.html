@@ -34,6 +34,10 @@
     </header>
 
     <div id="body">
+      <div id="maintenance" ng-class="{active: showCtrl.status.maintenance}">
+        The shows are currently being updated <i class="glyphicon glyphicon-refresh spin"></i>
+      </div>
+
       <a class="add-link btn" ng-click="showCtrl.addOrEdit()">
         <span>Add</span>
         <i class="glyphicon glyphicon-plus-sign"></i>
@@ -71,6 +75,7 @@
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <!-- endbower -->
     <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/socket.io-client/socket.io.js"></script>
     <script>
       jQuery.event.props.push('dataTransfer');
     </script>
