@@ -4,12 +4,27 @@ var tz = moment().tz('America/Los_Angeles');
 var v = App.Shows.v;
 var f = App.Shows.f;
 
-function listenSocket(socket, status) {
+function listenSocket(socket, ctrl, Show) {
+  // Todo alert people
   socket.on('addShow', function (show) {
-    // todo show should be a Show - Same for AddEdit.addShow()
-    v.showsByDay[show.day - 1].shows.push(show);
+    var showIndex = f.findShow(show._id, show.day - 1);
+
+    if (showIndex === false) {
+      v.showsByDay[show.day - 1].shows.push(show);
+    }
   });
 
+  // Todo Alert people
+  socket.on('updateShow', function (show) {
+    var showIndex = f.findShow(show._id, show.day - 1);
+
+    if (showIndex !== false) {
+      var oldShow = v.showsByDay[show.day - 1].shows[showIndex];
+      v.showsByDay[show.day - 1].shows[showIndex] = _.extend(oldShow, show);
+    }
+  });
+
+  // Todo alert people
   socket.on('removeShow', function (data) {
     var id = data.id;
     var day = data.day;
@@ -21,15 +36,19 @@ function listenSocket(socket, status) {
   });
 
   socket.on('maintenance', function (bool) {
-    status.maintenance = bool;
+    ctrl.status.maintenance = bool;
 
     if (bool === false) {
-      // todo reloadShows
+      reloadShows(Show);
     }
   });
 }
 
 function reloadShows(Show) {
+  for (var i = 0; i < 7; i += 1) {
+    App.Shows.v.showsByDay[i].shows = [];
+  }
+
   Show.query(function (shows) {
     var length = shows.length;
 
@@ -81,7 +100,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
     maintenance: false
   };
 
-  listenSocket(socket, this.status);
+  listenSocket(socket, this, Show);
   reloadShows(Show);
 
   this.yesterdaysShows = function () {
@@ -106,7 +125,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
       size: 'lg',
       resolve: {
         data: function () { return data || null; },
-        type: function () { return (data instanceof Show) ? ('edit') : ('add'); }
+        type: function () { return (typeof data !== 'undefined') ? ('edit') : ('add'); }
       }
     });
   };

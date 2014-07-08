@@ -1,6 +1,5 @@
 'use strict';
 
-var v = App.Shows.v;
 var f = App.Shows.f;
 
 // Reset on Cancel or submit
@@ -131,16 +130,20 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     httpRequests.reset();
 
     if (type === 'edit') {
-      show.$update({}, function (show) {
+      var callback = function (show) {
         if (show.day !== initialDay) {
           f.swapShow(show._id, initialDay - 1, show.day - 1);
         }
         $modalInstance.close();
-      });
-    } else {
-      Show.save($scope.show, function (show) {
-        v.showsByDay[show.day - 1].shows.push(show);
+      };
 
+      if (show instanceof Show) {
+        show.$update({}, callback);
+      } else {
+        Show.update(show, callback);
+      }
+    } else {
+      Show.save($scope.show, function () { // automatically added by the websockets
         $modalInstance.close();
       });
     }

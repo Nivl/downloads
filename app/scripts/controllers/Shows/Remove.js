@@ -3,7 +3,7 @@
 var v = App.Shows.v;
 var f = App.Shows.f;
 
-angular.module('app-controllers').controller('RemoveShowController', ['$scope', '$modalInstance', '$http', 'show', function ($scope, $modalInstance, $http, show) {
+angular.module('app-controllers').controller('RemoveShowController', ['$scope', '$modalInstance', '$http', 'Show', 'show', function ($scope, $modalInstance, $http, Show, show) {
   $scope.show = show;
 
   $scope.cancel = function () {
@@ -15,7 +15,12 @@ angular.module('app-controllers').controller('RemoveShowController', ['$scope', 
 
     if (showIndex !== false) {
       v.showsByDay[show.day - 1].shows.splice(showIndex, 1);
-      show.$delete();
+
+      if (show instanceof Show) {
+        show.$delete();
+      } else {
+        Show.delete({}, show);
+      }
     }
     $modalInstance.dismiss();
   };
