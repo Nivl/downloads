@@ -34,6 +34,11 @@
     </header>
 
     <div id="body">
+
+      <div id="alerts">
+        <alert ng-repeat="alert in showCtrl.alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+      </div>
+
       <div id="maintenance" ng-class="{active: showCtrl.status.maintenance}">
         The shows are currently being updated <i class="glyphicon glyphicon-refresh spin"></i>
       </div>

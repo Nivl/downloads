@@ -4,33 +4,47 @@ var tz = moment().tz('America/Los_Angeles');
 var v = App.Shows.v;
 var f = App.Shows.f;
 
+var alerts = [
+];
+
 function listenSocket(socket, ctrl, Show) {
-  // Todo alert people
   socket.on('addShow', function (show) {
     var showIndex = f.findShow(show._id, show.day - 1);
 
     if (showIndex === false) {
       v.showsByDay[show.day - 1].shows.push(show);
+      alerts.push({
+        type: 'success',
+        msg: show.title + ' has been added.'
+      });
     }
   });
 
-  // Todo Alert people
   socket.on('updateShow', function (show) {
     var showIndex = f.findShow(show._id, show.day - 1);
 
     if (showIndex !== false) {
       var oldShow = v.showsByDay[show.day - 1].shows[showIndex];
       v.showsByDay[show.day - 1].shows[showIndex] = _.extend(oldShow, show);
+      alerts.push({
+        type: 'warning',
+        msg: show.title + ' has been updated.'
+      });
     }
   });
 
-  // Todo alert people
   socket.on('removeShow', function (data) {
     var id = data.id;
     var day = data.day;
     var showIndex = f.findShow(id, day - 1);
 
     if (showIndex !== false) {
+      var title = v.showsByDay[day - 1].shows[showIndex].title;
+
+      alerts.push({
+        type: 'danger',
+        msg: title + ' has been removed.'
+      });
       v.showsByDay[day - 1].shows.splice(showIndex, 1);
     }
   });
@@ -39,12 +53,17 @@ function listenSocket(socket, ctrl, Show) {
     ctrl.status.maintenance = bool;
 
     if (bool === false) {
-      reloadShows(Show);
+      reloadShows(Show, function () {
+        alerts.push({
+          type: 'warning',
+          msg: 'All the shows have been updated.'
+        });
+      });
     }
   });
 }
 
-function reloadShows(Show) {
+function reloadShows(Show, callback) {
   for (var i = 0; i < 7; i += 1) {
     App.Shows.v.showsByDay[i].shows = [];
   }
@@ -91,17 +110,26 @@ function reloadShows(Show) {
         v.showsByDay[show.day - 1].shows.push(show);
       }
     }
+
+    if (_.isFunction(callback)) {
+      callback();
+    }
   });
 }
 
 angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal', 'Show', 'socket',  function ($http, $filter, $modal, Show, socket) {
   this.days = v.showsByDay;
+  this.alerts = alerts;
   this.status = {
     maintenance: false
   };
 
   listenSocket(socket, this, Show);
   reloadShows(Show);
+
+  this.closeAlert = function (index) {
+    alerts.splice(index, 1);
+  };
 
   this.yesterdaysShows = function () {
     var yesterday = tz.isoWeekday() - 2; // -1 for yesterday, -1 for the index
