@@ -36,7 +36,7 @@
     <div id="body">
 
       <div id="alerts">
-        <alert ng-repeat="alert in showCtrl.alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+        <alert ng-repeat="alert in showCtrl.alerts" type="{{alert.type}}" close="showCtrl.closeAlert($index)">{{alert.msg}}</alert>
       </div>
 
       <div id="maintenance" ng-class="{active: showCtrl.status.maintenance}">
