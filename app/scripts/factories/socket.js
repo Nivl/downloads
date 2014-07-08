@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('app-factories').factory('socket', function ($rootScope) {
+angular.module('app-factories').factory('Socket', ['$rootScope', function ($rootScope) {
   var socket = io.connect('0.0.0.0:3000');
 
   return {
@@ -24,4 +24,4 @@ angular.module('app-factories').factory('socket', function ($rootScope) {
       });
     }
   };
-});
+}]);

@@ -117,14 +117,14 @@ function reloadShows(Show, callback) {
   });
 }
 
-angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal', 'Show', 'socket',  function ($http, $filter, $modal, Show, socket) {
+angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal', 'Show', 'Socket',  function ($http, $filter, $modal, Show, Socket) {
   this.days = v.showsByDay;
   this.alerts = alerts;
   this.status = {
     maintenance: false
   };
 
-  listenSocket(socket, this, Show);
+  listenSocket(Socket, this, Show);
   reloadShows(Show);
 
   this.closeAlert = function (index) {
