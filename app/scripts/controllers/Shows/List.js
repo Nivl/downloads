@@ -1,6 +1,5 @@
 'use strict';
 
-var tz = moment().tz('America/Los_Angeles');
 var v = App.Shows.v;
 var f = App.Shows.f;
 
@@ -72,21 +71,21 @@ function reloadShows(Show, callback) {
     var length = shows.length;
 
     for (var i = 0; i < length; i += 1) {
-      var tz = moment().tz('America/Los_Angeles');
+      var today = moment().tz('America/Los_Angeles');
 
       if (shows[i] instanceof Show) {
         var show = shows[i];
-        show.isPaused = show.isCancelled === false && show.isCompleted === false;
+        show.isPaused = (show.isCancelled === false && show.isCompleted === false);
 
         if (show.isPaused) {
           try {
-            var yesterday = (tz.isoWeekday() - 1 < 1) ? (7) : (tz.isoWeekday() - 1);
+            var yesterday = (today.isoWeekday() - 1 < 1) ? (7) : (today.isoWeekday() - 1);
 
             if (show.day === yesterday) {
               if (show.latestEpisode && show.latestEpisode.date && /^\d+$/.test(show.latestEpisode.date)) {
-                var last = moment(parseInt(show.latestEpisode.date, 10));
+                var last = moment(parseInt(show.latestEpisode.date, 10)).tz('America/Los_Angeles');
 
-                if (last.isSame(tz.subtract('days', 1).valueOf(), 'day')) {
+                if (last.isSame(today.subtract('days', 1).valueOf(), 'day')) {
                   show.isPaused = false;
                   show.isCancelled = false;
                   show.isCompleted = false;
@@ -94,12 +93,12 @@ function reloadShows(Show, callback) {
               }
             } else {
               if (show.nextEpisode && show.nextEpisode.date && /^\d+$/.test(show.nextEpisode.date)) {
-                var next = moment(parseInt(show.nextEpisode.date, 10));
-                var today = tz.isoWeekday();
-                var delta = (show.day >= today) ? (show.day - today) : ((7 - today) + show.day);
+                var next = moment(parseInt(show.nextEpisode.date, 10)).tz('America/Los_Angeles');
 
-                if (next.isSame(tz.add('days', delta).valueOf(), 'day')) {
+                if (next.diff(today, 'days') < 6) {
                   show.isPaused = false;
+                  show.isCancelled = false;
+                  show.isCompleted = false;
                 }
               }
             }
@@ -132,6 +131,7 @@ angular.module('app-controllers').controller('ShowController', ['$http', '$filte
   };
 
   this.yesterdaysShows = function () {
+    var tz = moment().tz('America/Los_Angeles');
     var yesterday = tz.isoWeekday() - 2; // -1 for yesterday, -1 for the index
 
     if (yesterday === -1) {
