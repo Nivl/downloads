@@ -75,11 +75,6 @@ function reloadShows(Show, callback) {
 
       if (shows[i] instanceof Show) {
         var show = shows[i];
-
-        if (show.title === 'Pretty Little Liars') {
-          console.log(show);
-        }
-
         show.isPaused = (show.isCancelled === false && show.isCompleted === false);
 
         if (show.isPaused) {
