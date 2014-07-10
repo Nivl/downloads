@@ -116,7 +116,7 @@ function reloadShows(Show, callback) {
   });
 }
 
-angular.module('app-controllers').controller('ShowController', ['$http', '$filter', '$modal', 'Show', 'Socket',  function ($http, $filter, $modal, Show, Socket) {
+angular.module('app-controllers').controller('ShowController', ['$http', '$modal', 'Show', 'Socket',  function ($http, $modal, Show, Socket) {
   this.days = v.showsByDay;
   this.alerts = alerts;
   this.status = {

@@ -161,6 +161,8 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     if ($scope.show.title.length > 0) {
       queryTmdb();
+      queryTvdb();
+      queryTvRage();
     }
   };
 
@@ -176,6 +178,8 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     $http.jsonp(searchUri, {timeout: _.last(httpRequests.list).promise}).success(function (data) {
       /*jshint camelcase: false*/
       if (data.total_results > 0) {
+        $scope.fetching.setSuccess('tmdb');
+
         var result = null;
         var len = data.results.length;
         for (var i = 0; i < len; i += 1) {
@@ -192,42 +196,10 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         if ($scope.show.title !== result.original_name) {
           $scope.show.title = result.original_name;
         }
-
-        queryTmdbForIds();
       } else {
         $scope.fetching.setError('tmdb');
       }
       /*jshint camelcase: true*/
-    }).error(function () {
-      $scope.fetching.setError('tmdb');
-    });
-  }
-
-  function queryTmdbForIds() {
-    if (httpRequests.hasBeenCancelled) {
-      return;
-    }
-
-    var idsUri = 'https://api.themoviedb.org/3/tv/' + $scope.show.ids.tmdbId + '/external_ids?api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
-
-    httpRequests.list.push($q.defer());
-    $http.jsonp(idsUri, {timeout: _.last(httpRequests.list).promise}).success(function (ids) {
-      if (_.isEmpty(ids) === false) {
-        $scope.fetching.setSuccess('tmdb');
-
-        /*jshint camelcase: false*/
-        $scope.show.ids.imdbId = ids.imdb_id;
-        $scope.show.ids.tvrageId = ids.tvrage_id;
-        /*jshint camelcase: true*/
-
-        queryTvdb();
-
-        if ($scope.show.ids.tvrageId) {
-          queryTvRage();
-        }
-      } else {
-        $scope.fetching.setError('tmdb');
-      }
     }).error(function () {
       $scope.fetching.setError('tmdb');
     });
@@ -247,14 +219,21 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
       if (_.isEmpty(data) === false) {
         $scope.fetching.setSuccess('tvdb');
 
-        $scope.show.synopsis = data.Overview;
+        if (Array.isArray(data)) {
+          var newData = $filter('orderBy')(data, 'FirstAired', true);
+          var length = newData.length;
 
-        if (!$scope.show.ids.tvrageId) {
-          if ($scope.show.title !== data.Overview) {
-            $scope.show.alternateTitle = data.SeriesName;
-            queryTvRage();
+          for (var i = 0; i < length; i += 1) {
+            if (typeof newData[i].FirstAired !== 'undefined' && newData[i].FirstAired.length > 0) {
+              data = newData[i];
+              break;
+            }
           }
         }
+
+        $scope.show.synopsis = data.Overview;
+        $scope.show.ids.tvdb = data.seriesid;
+
       } else {
         $scope.fetching.setError('tvdb');
       }
@@ -279,9 +258,8 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
         $scope.fetching.setSuccess('tvrage');
 
-        if (data.id) {
-          $scope.show.ids.tvrageId = data.id;
-        }
+        $scope.show.ids.tvrage = data['Show Id'];
+
 
         if (data.Status) {
           if (data.Status === 'Ended') {
