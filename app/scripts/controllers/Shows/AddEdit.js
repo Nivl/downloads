@@ -175,20 +175,37 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         $scope.fetching.setSuccess('tvdb');
 
         if (Array.isArray(data)) {
-          var newData = $filter('orderBy')(data, 'FirstAired', true);
-          var length = newData.length;
-
-          for (var i = 0; i < length; i += 1) {
-            if (typeof newData[i].FirstAired !== 'undefined' && newData[i].FirstAired.length > 0) {
-              data = newData[i];
-              break;
-            }
-          }
+          data = data[0];
         }
 
         $scope.show.synopsis = data.Overview;
         $scope.show.ids.tvdb = data.seriesid;
+        queryPoster();
 
+      } else {
+        $scope.fetching.setError('tvdb');
+      }
+    }).error(function () {
+      $scope.fetching.setError('tvdb');
+    });
+  }
+
+  function queryPoster() {
+    if (httpRequests.hasBeenCancelled) {
+      return;
+    }
+
+    var tvdbUrl = 'http://0.0.0.0:3000/shows/fetch/poster/';
+
+    $scope.fetching.setFetching('tvdb');
+
+    httpRequests.list.push($q.defer());
+    $http.post(tvdbUrl, $scope.show, {timeout: _.last(httpRequests.list).promise}).success(function (data) {
+      if (_.isEmpty(data) === false) {
+        $scope.fetching.setSuccess('tvdb');
+
+
+        $scope.show.poster = data.poster;
       } else {
         $scope.fetching.setError('tvdb');
       }
