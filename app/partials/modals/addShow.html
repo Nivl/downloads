@@ -24,24 +24,20 @@
     <div class="form-group">
       <div class="col-sm-3 col-sm-offset-3 fetching-buttons">
         <button type="button" ng-click="fetchInfo()" class="btn btn-default"
-                ng-class="{disabled: fetching.isFetching('tmdb') || fetching.isFetching('tvdb') || fetching.isFetching('tvrage')}">
+                ng-class="{disabled: fetching.isFetching('tvdb') || fetching.isFetching('tvrage')}">
           <i class="glyphicon glyphicon-refresh"
-             ng-class="{spin: fetching.isFetching('tmdb') || fetching.isFetching('tvdb') || fetching.isFetching('tvrage')}"></i> Fetch data
+             ng-class="{spin: fetching.isFetching('tvdb') || fetching.isFetching('tvrage')}"></i> Fetch data
         </button>
 
         <button type="button" ng-click="cancelRequests()" class="btn btn-warning"
-                ng-class="{disabled: !fetching.isFetching('tmdb') && !fetching.isFetching('tvdb') && !fetching.isFetching('tvrage')}">
+                ng-class="{disabled: !fetching.isFetching('tvdb') && !fetching.isFetching('tvrage')}">
           <i class="glyphicon glyphicon-remove"></i> Stop
         </button>
       </div>
 
       <div class="col-sm-6">
         <ul class="fetching-info list-unstyled">
-          <li class="api-tmdb" ng-class="fetching.getClass('tmdb')" tooltip-placement="right" tooltip="Fetch the cover">
-            Fetching The Movie Database <i class="glyphicon" ng-class="fetching.getIcon('tmdb')"></i>
-          </li>
-
-          <li class="api-tvdb" ng-class="fetching.getClass('tvdb')" tooltip-placement="right" tooltip="Fetch the synopsis">
+          <li class="api-tvdb" ng-class="fetching.getClass('tvdb')" tooltip-placement="right" tooltip="Fetch the synopsis and the poster">
             Fetching The TV Database <i class="glyphicon" ng-class="fetching.getIcon('tvdb')"></i>
           </li>
 
@@ -54,7 +50,7 @@
 
     <h2>Preview</h2>
     <div class="show preview clearfix">
-      <img class="poster" ng-src="https://image.tmdb.org/t/p/w185/{{show.poster}}" />
+      <img class="poster" ng-src="http://thetvdb.com/banners/posters/{{show.ids.tvdb}}-1.jpg" />
 
       <div class="synopsis">
         <h3>{{show.title}}</h3>
@@ -79,7 +75,7 @@
   </div>
 
   <div class="modal-footer">
-    <button type="submit" class="btn btn-primary" ng-class="{disabled: fetching.isFetching('tmdb') || fetching.isFetching('tvdb') || fetching.isFetching('tvrage')}">Add</button>
+    <button type="submit" class="btn btn-primary" ng-class="{disabled: fetching.isFetching('tvdb') || fetching.isFetching('tvrage')}">Add</button>
     <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
   </div>
 </form>

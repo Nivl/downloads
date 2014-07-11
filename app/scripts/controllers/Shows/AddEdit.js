@@ -4,7 +4,6 @@ var f = App.Shows.f;
 
 // Reset on Cancel or submit
 var fetchingStatus = {
-  tmdb : 1,
   tvdb : 1,
   tvrage : 1,
 
@@ -76,7 +75,6 @@ var httpRequests = {
   reset: function () {
     httpRequests.list = [];
     httpRequests.hasBeenCancelled = false;
-    fetchingStatus.setError('tmdb');
     fetchingStatus.setError('tvdb');
     fetchingStatus.setError('tvrage');
   },
@@ -91,9 +89,6 @@ var httpRequests = {
 
     httpRequests.list = [];
 
-    if (fetchingStatus.hasSucceed('tmdb') === false) {
-      fetchingStatus.setError('tmdb');
-    }
     if (fetchingStatus.hasSucceed('tvdb') === false) {
       fetchingStatus.setError('tvdb');
     }
@@ -160,50 +155,10 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     httpRequests.reset();
 
     if ($scope.show.title.length > 0) {
-      queryTmdb();
       queryTvdb();
       queryTvRage();
     }
   };
-
-  function queryTmdb() {
-    if (httpRequests.hasBeenCancelled) {
-      return;
-    }
-
-    $scope.fetching.setFetching('tmdb');
-    var searchUri = 'https://api.themoviedb.org/3/search/tv?query=' + $scope.show.title + '&api_key=c9a3d5cd37bcdbd7e45fdb0171762e07&callback=JSON_CALLBACK';
-
-    httpRequests.list.push($q.defer());
-    $http.jsonp(searchUri, {timeout: _.last(httpRequests.list).promise}).success(function (data) {
-      /*jshint camelcase: false*/
-      if (data.total_results > 0) {
-        $scope.fetching.setSuccess('tmdb');
-
-        var result = null;
-        var len = data.results.length;
-        for (var i = 0; i < len; i += 1) {
-          result = data.results[i];
-
-          if (result.poster_path !== null) {
-            break;
-          }
-        }
-
-        $scope.show.ids.tmdbId = result.id;
-        $scope.show.poster = result.poster_path;
-
-        if ($scope.show.title !== result.original_name) {
-          $scope.show.title = result.original_name;
-        }
-      } else {
-        $scope.fetching.setError('tmdb');
-      }
-      /*jshint camelcase: true*/
-    }).error(function () {
-      $scope.fetching.setError('tmdb');
-    });
-  }
 
   function queryTvdb() {
     if (httpRequests.hasBeenCancelled) {
@@ -257,14 +212,14 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         // TODO Set isPaused
 
         $scope.fetching.setSuccess('tvrage');
-
         $scope.show.ids.tvrage = data['Show Id'];
-
 
         if (data.Status) {
           if (data.Status === 'Ended') {
             $scope.show.isCompleted = true;
+            $scope.show.isCancelled = false;
           } else if (data.Status === 'Canceled') {
+            $scope.show.isCompleted = false;
             $scope.show.isCancelled = true;
           }
         }
