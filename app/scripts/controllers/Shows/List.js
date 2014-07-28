@@ -106,7 +106,15 @@ function reloadShows(Show, callback) {
             console.log(show.title + ': ' + e);
           }
         }
-        v.showsByDay[show.day - 1].shows.push(show);
+        if (show.day === 0) {
+
+        }
+        if (typeof v.showsByDay[show.day - 1] !== 'undefined') {
+          v.showsByDay[show.day - 1].shows.push(show);
+        } else {
+          console.log('The following show contains wrong data');
+          console.log(show);
+        }
       }
     }
 

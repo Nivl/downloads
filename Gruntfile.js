@@ -268,6 +268,7 @@ module.exports = function (grunt) {
     // less
     grunt.task.run([
       'clean:server',
+      'wiredep',
       'recess:dist',
       'neuter:app',
       'connect:dev',
