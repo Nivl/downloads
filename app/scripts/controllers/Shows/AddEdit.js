@@ -126,7 +126,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     if (type === 'edit') {
       var callback = function (show) {
-        if (show.day !== initialDay) {
+        if (show.day !== initialDay && show.day !== null) {
           f.swapShow(show._id, initialDay - 1, show.day - 1);
         }
         $modalInstance.close();
@@ -241,6 +241,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
           }
         }
 
+        $scope.show.day = null;
         if (data.Airtime) {
           var info = data.Airtime.split(' at ');
           $scope.show.day = f.findWeekIndex(info[0]);
@@ -252,6 +253,10 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
         if (data['Latest Episode'] && data['Latest Episode'][2]) {
           $scope.show.latestEpisode = {'title': data['Latest Episode'][1], date: data['Latest Episode'][2]};
+        }
+
+        if ($scope.show.day === null) {
+          $scope.fetching.setError('tvrage');
         }
 
       } else {

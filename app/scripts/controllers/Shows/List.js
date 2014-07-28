@@ -11,10 +11,17 @@ function listenSocket(socket, ctrl, Show) {
     var showIndex = f.findShow(show._id, show.day - 1);
 
     if (showIndex === false) {
-      v.showsByDay[show.day - 1].shows.push(show);
+      if (show.day !== null) {
+        v.showsByDay[show.day - 1].shows.push(show);
+        alerts.push({
+          type: 'success',
+          msg: show.title + ' has been added.'
+        });
+      }
+    } else {
       alerts.push({
-        type: 'success',
-        msg: show.title + ' has been added.'
+        type: 'warning',
+        msg: show.title + ' has been added, but won\'t be displayed until the next system update.'
       });
     }
   });
