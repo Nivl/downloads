@@ -126,7 +126,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
 
     if (type === 'edit') {
       var callback = function (show) {
-        if (show.day !== initialDay && show.day !== null) {
+        if (show.day !== initialDay) {
           f.swapShow(show._id, initialDay - 1, show.day - 1);
         }
         $modalInstance.close();
@@ -256,7 +256,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         }
 
         if ($scope.show.day === null) {
-          $scope.fetching.setError('tvrage');
+          $scope.show.day = 8;
         }
 
       } else {

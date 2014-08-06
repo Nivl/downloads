@@ -10,7 +10,9 @@ App.Shows.v.showsByDay = [
   {name: 'Thursday', shows: []},
   {name: 'Friday', shows: []},
   {name: 'Saturday', shows: []},
-  {name: 'Sunday', shows: []}
+  {name: 'Sunday', shows: []},
+
+  {name: 'Unknown', shows: []}
 ];
 
 App.Shows.f.findWeekIndex = function (name) {
@@ -23,7 +25,7 @@ App.Shows.f.findWeekIndex = function (name) {
 };
 
 App.Shows.f.findShow = function (showId, day) {
-  if (day >= 0 && day <= 6) {
+  if (day >= 0 && day <= 7) {
     var length = v.showsByDay[day].shows.length;
 
     for (var index = 0; index < length; index += 1) {

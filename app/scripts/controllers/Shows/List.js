@@ -70,7 +70,7 @@ function listenSocket(socket, ctrl, Show) {
 }
 
 function reloadShows(Show, callback) {
-  for (var i = 0; i < 7; i += 1) {
+  for (var i = 0; i < 8; i += 1) {
     App.Shows.v.showsByDay[i].shows = [];
   }
 
@@ -89,8 +89,10 @@ function reloadShows(Show, callback) {
             var yesterday = (today.isoWeekday() - 1 < 1) ? (7) : (today.isoWeekday() - 1);
 
             if (show.day === yesterday) {
+              var last;
+
               if (show.latestEpisode && show.latestEpisode.date && /^\d+$/.test(show.latestEpisode.date)) {
-                var last = moment(parseInt(show.latestEpisode.date, 10)).tz('America/Los_Angeles');
+                last = moment(parseInt(show.latestEpisode.date, 10)).tz('America/Los_Angeles');
 
                 if (last.isSame(today.subtract('days', 1).valueOf(), 'day')) {
                   show.isPaused = false;
@@ -98,6 +100,17 @@ function reloadShows(Show, callback) {
                   show.isCompleted = false;
                 }
               }
+              // In case it hasn't been updated yet, we check if the next episode was yesterday
+              if (show.nextEpisode && show.nextEpisode.date && /^\d+$/.test(show.nextEpisode.date)) {
+                last = moment(parseInt(show.nextEpisode.date, 10)).tz('America/Los_Angeles');
+
+                if (last.isSame(today.subtract('days', 1).valueOf(), 'day')) {
+                  show.isPaused = false;
+                  show.isCancelled = false;
+                  show.isCompleted = false;
+                }
+              }
+
             } else {
               if (show.nextEpisode && show.nextEpisode.date && /^\d+$/.test(show.nextEpisode.date)) {
                 var next = moment(parseInt(show.nextEpisode.date, 10)).tz('America/Los_Angeles');
@@ -113,15 +126,13 @@ function reloadShows(Show, callback) {
             console.log(show.title + ': ' + e);
           }
         }
-        if (show.day === 0) {
 
+        if (typeof v.showsByDay[show.day - 1] === 'undefined') {
+          show.day = 8;
+          show.$update();
         }
-        if (typeof v.showsByDay[show.day - 1] !== 'undefined') {
-          v.showsByDay[show.day - 1].shows.push(show);
-        } else {
-          console.log('The following show contains wrong data');
-          console.log(show);
-        }
+
+        v.showsByDay[show.day - 1].shows.push(show);
       }
     }
 
