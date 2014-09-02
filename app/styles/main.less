@@ -4,6 +4,8 @@
 @dark-blue:   #355069;
 @light-blue:  #5e7a9b;
 
+@light-red:  #eea6a6;
+
 h1, h2, h3, h4, h5, h6,
 label {
   font-weight:   300 !important; // 400 if other content than titles
@@ -109,7 +111,7 @@ body > header {
       text-shadow: none;
 
       &.cancelled {
-        background-color: #eea6a6 !important;
+        background-color: @light-red !important;
         border-color: #99646C !important;
       }
 
@@ -208,6 +210,14 @@ body > header {
       position: absolute;
       top: 0;
       right: 0;
+    }
+
+    .update-failed {
+      color: @light-red;
+      padding:  10px 15px;
+      position: absolute;
+      top: 0;
+      right: 46px;
     }
   }
 

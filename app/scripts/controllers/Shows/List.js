@@ -69,6 +69,12 @@ function listenSocket(socket, ctrl, Show) {
   });
 }
 
+function setAsAiring(show) {
+  show.isPaused = false;
+  show.isCancelled = false;
+  show.isCompleted = false;
+}
+
 function reloadShows(Show, callback) {
   for (var i = 0; i < 8; i += 1) {
     App.Shows.v.showsByDay[i].shows = [];
@@ -91,13 +97,13 @@ function reloadShows(Show, callback) {
             if (show.day === yesterday) {
               var last;
 
-              if (show.latestEpisode && show.latestEpisode.date && /^\d+$/.test(show.latestEpisode.date)) {
+              if (show.totalUpdateFailure > 0) {
+                setAsAiring(show);
+              } else if (show.latestEpisode && show.latestEpisode.date && /^\d+$/.test(show.latestEpisode.date)) {
                 last = moment(parseInt(show.latestEpisode.date, 10)).tz('America/Los_Angeles');
 
                 if (last.isSame(today.subtract('days', 1).valueOf(), 'day')) {
-                  show.isPaused = false;
-                  show.isCancelled = false;
-                  show.isCompleted = false;
+                  setAsAiring(show);
                 }
               }
               // In case it hasn't been updated yet, we check if the next episode was yesterday
@@ -105,9 +111,7 @@ function reloadShows(Show, callback) {
                 last = moment(parseInt(show.nextEpisode.date, 10)).tz('America/Los_Angeles');
 
                 if (last.isSame(today.subtract('days', 1).valueOf(), 'day')) {
-                  show.isPaused = false;
-                  show.isCancelled = false;
-                  show.isCompleted = false;
+                  setAsAiring(show);
                 }
               }
 
@@ -116,9 +120,7 @@ function reloadShows(Show, callback) {
                 var next = moment(parseInt(show.nextEpisode.date, 10)).tz('America/Los_Angeles');
 
                 if (next.diff(today, 'days') < 6) {
-                  show.isPaused = false;
-                  show.isCancelled = false;
-                  show.isCompleted = false;
+                  setAsAiring(show);
                 }
               }
             }
