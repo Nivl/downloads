@@ -97,7 +97,7 @@ function reloadShows(Show, callback) {
             if (show.day === yesterday) {
               var last;
 
-              if (show.totalUpdateFailure > 0) {
+              if (show.totalUpdateFailure > 3) {
                 setAsAiring(show);
               } else if (show.latestEpisode && show.latestEpisode.date && /^\d+$/.test(show.latestEpisode.date)) {
                 last = moment(parseInt(show.latestEpisode.date, 10)).tz('America/Los_Angeles');
