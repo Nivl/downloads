@@ -144,7 +144,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
     }
   };
 
-  
+
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
@@ -229,7 +229,7 @@ angular.module('app-controllers').controller('AddShowController', ['$scope', '$m
         // TODO Set isPaused
 
         $scope.fetching.setSuccess('tvrage');
-        $scope.show.ids.tvrage = data['Show Id'];
+        $scope.show.ids.tvrage = data['Show ID'];
 
         if (data.Status) {
           if (data.Status === 'Ended') {
